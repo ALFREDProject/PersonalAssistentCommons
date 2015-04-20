@@ -3,8 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PersonalAssistantCommons.iml" filepath="$PROJECT_DIR$/PersonalAssistantCommons.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pa-sharedlibrary/pa-sharedlibrary.iml" filepath="$PROJECT_DIR$/pa-sharedlibrary/pa-sharedlibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PersonalAssistantShared/PersonalAssistantShared.iml" filepath="$PROJECT_DIR$/PersonalAssistantShared/PersonalAssistantShared.iml" />
     </modules>
   </component>
 </project>
-
