@@ -1,5 +1,7 @@
 package eu.alfred.api.storage.responses;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -7,5 +9,6 @@ import org.json.JSONObject;
  */
 public interface BucketResponse {
     public void OnSuccess(JSONObject response);
+    public void OnSuccess(JSONArray response);
     public void OnError(Exception exception);
 }
