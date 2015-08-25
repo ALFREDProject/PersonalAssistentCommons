@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PersonalAssistantCommons.iml" filepath="$PROJECT_DIR$/PersonalAssistantCommons.iml" />
       <module fileurl="file://$PROJECT_DIR$/PersonalAssistantShared/PersonalAssistantShared.iml" filepath="$PROJECT_DIR$/PersonalAssistantShared/PersonalAssistantShared.iml" />
+      <module fileurl="file://$PROJECT_DIR$/personalassistantcommons.iml" filepath="$PROJECT_DIR$/personalassistantcommons.iml" />
     </modules>
   </component>
 </project>
