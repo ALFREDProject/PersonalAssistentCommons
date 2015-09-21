@@ -112,7 +112,6 @@ public class CloudStorage {
             }
         }
     }
-
     private class CreateBucketResponse extends Handler {
 
         private BucketResponse bucketResponse;
