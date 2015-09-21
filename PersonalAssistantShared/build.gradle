@@ -20,5 +20,14 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile(name:'saf-debug', ext:'aar')
     compile 'com.android.support:appcompat-v7:21.0.3'
+
+}
+
+
+repositories{
+    flatDir{
+        dirs 'libs'
+    }
 }

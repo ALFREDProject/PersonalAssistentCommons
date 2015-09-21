@@ -1,19 +1,22 @@
 package eu.alfred.api.sensors;
 
 import android.os.Messenger;
-import eu.alfred.api.sensors.exceptions.SAFException;
 
-import android.util.Log;
+import org.alfred.saf.SAFException;
+import org.alfred.saf.SensorDriver;
+import org.alfred.saf.SensorListener;
 
 /**
  * Created by gilbe on 21.09.2015.
  */
 public class SAFFacade {
     private Messenger messenger;
-    
+    private org.alfred.saf.SAFFacade safFacade;
 
     public SAFFacade(Messenger messenger) throws SAFException {
         this.messenger = messenger;
+
+        
     }
 
     public void registerDriver(SensorDriver driver) throws SAFException {
