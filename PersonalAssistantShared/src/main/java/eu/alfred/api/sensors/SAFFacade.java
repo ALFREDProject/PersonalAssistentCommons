@@ -5,9 +5,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
-import org.alfred.saf.SAFException;
-import org.alfred.saf.SensorDriver;
-import org.alfred.saf.SensorListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,7 +16,6 @@ import eu.alfred.api.storage.responses.BucketResponse;
  */
 public class SAFFacade {
     private Messenger messenger;
-    private org.alfred.saf.SAFFacade safFacade;
     private SAFFacadeReceivedResponse safFacadeReceivedResponse;
 
     private class SAFFacadeReceivedResponse extends Handler {
@@ -32,7 +28,7 @@ public class SAFFacade {
 
             switch (respCode) {
                 //Client asked for a list of contacts. Service delivers them with this response Id
-                case SAFFacadeConstants.SAF_INSTANCE_RESPONSE: {
+                case SAFFacadeConstants.READ_LEGACY_DATA_RESPONSE: {
                     JSONObject jsonResponse = null;
 
                     try {
@@ -48,14 +44,14 @@ public class SAFFacade {
         }
     }
 
-    public SAFFacade(Messenger messenger) throws SAFException, IllegalArgumentException {
+    public SAFFacade(Messenger messenger) throws IllegalArgumentException {
         this.messenger = messenger;
 
         if (messenger == null) throw new IllegalArgumentException("messenger should not be null!");
 
         safFacadeReceivedResponse = new SAFFacadeReceivedResponse();
 
-        Message msg = Message.obtain(null, SAFFacadeConstants.SAF_INSTANCE_CREATE);
+        Message msg = Message.obtain(null, SAFFacadeConstants.READ_LEGACY_DATA);
         msg.replyTo = new Messenger(safFacadeReceivedResponse);
 
         try {
@@ -63,21 +59,5 @@ public class SAFFacade {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-    }
-
-    public void registerDriver(SensorDriver driver) throws SAFException {
-
-    }
-
-    public void unregisterDriver(SensorDriver driver) throws SAFException {
-
-    }
-
-    public void registerListener(String url, SensorListener listener) throws SAFException {
-
-    }
-
-    public void unRegisterListener(String url, SensorListener listener) throws SAFException {
-
     }
 }
