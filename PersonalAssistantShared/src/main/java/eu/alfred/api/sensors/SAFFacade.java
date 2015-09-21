@@ -13,8 +13,10 @@ public class SAFFacade {
     private Messenger messenger;
     private org.alfred.saf.SAFFacade safFacade;
 
-    public SAFFacade(Messenger messenger) throws SAFException {
+    public SAFFacade(Messenger messenger) throws SAFException, IllegalArgumentException {
         this.messenger = messenger;
+
+        if (messenger == null) throw new IllegalArgumentException("messenger should not be null!");
 
         
     }
