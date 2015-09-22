@@ -8,6 +8,7 @@ import android.os.RemoteException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import eu.alfred.api.sensors.responses.SensorDataResponse;
 import eu.alfred.api.storage.StorageConstants;
 import eu.alfred.api.storage.responses.BucketResponse;
 
@@ -16,11 +17,14 @@ import eu.alfred.api.storage.responses.BucketResponse;
  */
 public class SAFFacade {
     private Messenger messenger;
-    private SAFFacadeReceivedResponse safFacadeReceivedResponse;
+    private SensorDataResponseHandler sensorDataResponseHandler;
 
-    private class SAFFacadeReceivedResponse extends Handler {
+    private class SensorDataResponseHandler extends Handler {
+        private SensorDataResponse sensorDataResponse;
 
-        public SAFFacadeReceivedResponse(){}
+        public SensorDataResponseHandler(SensorDataResponse sensorDataResponse){
+            this.sensorDataResponse = sensorDataResponse;
+        }
 
         @Override
         public void handleMessage(Message msg){
@@ -28,19 +32,38 @@ public class SAFFacade {
 
             switch (respCode) {
                 //Client asked for a list of contacts. Service delivers them with this response Id
-                case SAFFacadeConstants.READ_LEGACY_DATA_RESPONSE: {
+                case SAFFacadeConstants.READ_LIVE_DATA_RESPONSE: {
                     JSONObject jsonResponse = null;
 
                     try {
-                        jsonResponse = new JSONObject(msg.getData().getString("JsonData", "{}"));
+                        String msgData = msg.getData().getString("data", "{}");
+                        jsonResponse = new JSONObject(msgData);
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        sensorDataResponse.OnError(e);
                     }
 
-                    //bucketResponse.OnSuccess(jsonResponse);
+                    sensorDataResponse.OnSuccess(jsonResponse);
                     break;
                 }
             }
+        }
+    }
+
+    public void GetLiveData(String sensorUri, SensorDataResponse sensorDataResponse) throws IllegalArgumentException {
+        if (sensorUri == null || "".equals(sensorUri.trim())) throw new IllegalArgumentException("Empty or null Uri is not allowed.");
+
+        if (sensorDataResponse == null) throw new IllegalArgumentException("Response must not be null.");
+
+        sensorDataResponseHandler = new SensorDataResponseHandler(sensorDataResponse);
+
+        Message msg = Message.obtain(null, SAFFacadeConstants.READ_LIVE_DATA);
+        msg.replyTo = new Messenger(sensorDataResponseHandler);
+
+        try {
+            messenger.send(msg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
@@ -49,15 +72,5 @@ public class SAFFacade {
 
         if (messenger == null) throw new IllegalArgumentException("messenger should not be null!");
 
-        safFacadeReceivedResponse = new SAFFacadeReceivedResponse();
-
-        Message msg = Message.obtain(null, SAFFacadeConstants.READ_LEGACY_DATA);
-        msg.replyTo = new Messenger(safFacadeReceivedResponse);
-
-        try {
-            messenger.send(msg);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
     }
 }
