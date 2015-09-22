@@ -7,6 +7,7 @@ import org.json.JSONObject;
  * Created by gilbe on 22.09.2015.
  */
 public interface SensorDataResponse {
-    void OnSuccess(JSONObject response);
+    //void OnSuccess(JSONObject response);
+    void OnSuccess(Byte[] data);
     void OnError(Exception exception);
 }

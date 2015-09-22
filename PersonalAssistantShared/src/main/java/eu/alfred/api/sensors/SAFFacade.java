@@ -1,9 +1,11 @@
 package eu.alfred.api.sensors;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Base64;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,11 +45,25 @@ public class SAFFacade {
                         sensorDataResponse.OnError(e);
                     }
 
-                    sensorDataResponse.OnSuccess(jsonResponse);
+                    try {
+                        sensorDataResponse.OnSuccess(toObjects(Base64.decode(jsonResponse.getString("value"), Base64.DEFAULT)));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        sensorDataResponse.OnError(e);
+                    }
                     break;
                 }
             }
         }
+    }
+
+    Byte[] toObjects(byte[] bytesPrim) {
+        Byte[] bytes = new Byte[bytesPrim.length];
+
+        int i = 0;
+        for (byte b : bytesPrim) bytes[i++] = b; // Autoboxing
+
+        return bytes;
     }
 
     public void GetLiveData(String sensorUri, SensorDataResponse sensorDataResponse) throws IllegalArgumentException {
@@ -59,6 +75,9 @@ public class SAFFacade {
 
         Message msg = Message.obtain(null, SAFFacadeConstants.READ_LIVE_DATA);
         msg.replyTo = new Messenger(sensorDataResponseHandler);
+        Bundle msgBundle = new Bundle();
+        msgBundle.putString("Uri",sensorUri);
+        msg.setData(msgBundle);
 
         try {
             messenger.send(msg);
