@@ -45,9 +45,12 @@ public class Cade {
         this.messenger = messenger;
     }
 
-    public void InitiateSpeechRecognition(){
+    public void InitiateSpeechRecognition(String callerName){
         if (messenger != null) {
             Message msg = Message.obtain(null, CadeConstants.INITIATE_SPEECH_RECOGNITION);
+            Bundle data = new Bundle();
+            data.putString("callerName", callerName);
+            msg.setData(data);
             try {
                 messenger.send(msg);
             } catch (RemoteException e) {
