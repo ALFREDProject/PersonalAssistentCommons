@@ -45,9 +45,23 @@ public class Cade {
         this.messenger = messenger;
     }
 
-    public void InitiateSpeechRecognition(String callerName){
+    public void StartListening(String callerName){
         if (messenger != null) {
-            Message msg = Message.obtain(null, CadeConstants.INITIATE_SPEECH_RECOGNITION);
+            Message msg = Message.obtain(null, CadeConstants.START_LISTENING);
+            Bundle data = new Bundle();
+            data.putString("callerName", callerName);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void StopListening(String callerName){
+        if (messenger != null) {
+            Message msg = Message.obtain(null, CadeConstants.STOP_LISTENING);
             Bundle data = new Bundle();
             data.putString("callerName", callerName);
             msg.setData(data);
