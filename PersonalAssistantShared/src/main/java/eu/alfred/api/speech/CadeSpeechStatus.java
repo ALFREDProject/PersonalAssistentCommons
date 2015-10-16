@@ -5,4 +5,6 @@ package eu.alfred.api.speech;
  */
 public class CadeSpeechStatus {
     public static final String READY_TO_SPEAK = "READY_TO_SPEAK";
+    public static final String BEGIN_OF_SPEECH = "BEGIN_OF_SPEECH";
+    public static final String END_OF_SPEECH = "END_OF_SPEECH";
 }
