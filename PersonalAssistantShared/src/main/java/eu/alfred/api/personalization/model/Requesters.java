@@ -1,4 +1,4 @@
-package eu.alfred.api.event.model;
+package eu.alfred.api.personalization.model;
 
 import java.util.HashMap;
 

@@ -1,4 +1,4 @@
-package eu.alfred.api.event.model;
+package eu.alfred.api.personalization.model;
 
 import java.lang.reflect.Field; 
 import java.util.HashSet;

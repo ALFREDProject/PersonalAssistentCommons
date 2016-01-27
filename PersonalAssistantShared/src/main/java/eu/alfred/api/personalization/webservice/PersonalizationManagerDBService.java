@@ -1,4 +1,4 @@
-package eu.alfred.api.event.webservice;
+package eu.alfred.api.personalization.webservice;
 
 import java.util.List;
 
@@ -13,10 +13,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import eu.alfred.api.event.model.Contact;
-import eu.alfred.api.event.model.HistoricalEntry;
-import eu.alfred.api.event.model.Requesters;
-import eu.alfred.api.event.model.UserProfile;
+import eu.alfred.api.personalization.model.Contact;
+import eu.alfred.api.personalization.model.HistoricalEntry;
+import eu.alfred.api.personalization.model.Requesters;
+import eu.alfred.api.personalization.model.UserProfile;
 
 //@WebService(serviceName = "databaseServices", targetNamespace = "http://80.86.83.34:8080/personalization-manager/services")
 //@WebService(serviceName = "databaseServices", targetNamespace = "http://80.86.83.34:8080/personalization-manager/services")
