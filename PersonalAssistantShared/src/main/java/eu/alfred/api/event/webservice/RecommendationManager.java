@@ -19,10 +19,10 @@ import eu.alfred.api.event.recommendation.Eventrating;
 /**
  * Created by Tobias on 27/01/2016.
  */
-public class Recommendations extends Handler implements RecommendationService  {
+public class RecommendationManager extends Handler implements RecommendationService  {
     private Messenger messenger;
 
-    public Recommendations(Messenger messenger){
+    public RecommendationManager(Messenger messenger){
         this.messenger = messenger;
     }
 
@@ -34,7 +34,7 @@ public class Recommendations extends Handler implements RecommendationService  {
      * @param eventID The event the user might attend
      */
     public void getEventRecommendationForUSer(UserProfile user, boolean attend, Event eventID) {
-
+        throw new UnsupportedOperationException("This is not implemented at the moment");
     }
     /**
      * Gets all recommendations for a certain user
@@ -45,7 +45,14 @@ public class Recommendations extends Handler implements RecommendationService  {
     public List<Event> getEventRecommendationForUSer(UserProfile user) {
         if (messenger != null) {
             Message msg = Message.obtain(null, RecommendationConstants.ASK_FOR_RECOMMENDATIONS);
-            //TODO: DO fancy things here
+            Bundle data = new Bundle();
+            data.putString("user", new Gson().toJson(user));
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
         return new ArrayList<>();//TODO
     }
