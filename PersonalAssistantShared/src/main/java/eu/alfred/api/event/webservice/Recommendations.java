@@ -26,6 +26,16 @@ public class Recommendations extends Handler implements RecommendationService  {
         this.messenger = messenger;
     }
 
+
+    /**
+     * Give a feedback whether the user do attend or do NOT atted a certain event
+     * @param user The profile of the user
+     * @param attend boolean value whether the user attends (true) the event or not (false)
+     * @param eventID The event the user might attend
+     */
+    public void getEventRecommendationForUSer(UserProfile user, boolean attend, Event eventID) {
+
+    }
     /**
      * Gets all recommendations for a certain user
      * @param user The user to get events for
@@ -37,7 +47,7 @@ public class Recommendations extends Handler implements RecommendationService  {
             Message msg = Message.obtain(null, RecommendationConstants.ASK_FOR_RECOMMENDATIONS);
             //TODO: DO fancy things here
         }
-        return new ArrayList<>();
+        return new ArrayList<>();//TODO
     }
 
     /**
@@ -49,7 +59,7 @@ public class Recommendations extends Handler implements RecommendationService  {
     @Override
     public List<Event> createEventRecommendationAnswer(Eventrating rating, UserProfile user) {
         if (messenger != null) {
-            Message msg = Message.obtain(null, RecommendationConstants.GIVE_EVENT_RATING);
+            Message msg = Message.obtain(null, RecommendationConstants.CREATE_EVENT_RATING);
             Bundle data = new Bundle();
             data.putString("rating", new Gson().toJson(rating));
             data.putString("user", new Gson().toJson(user));
@@ -60,7 +70,23 @@ public class Recommendations extends Handler implements RecommendationService  {
                 e.printStackTrace();
             }
         }
-        return new ArrayList<Event>();
+        return new ArrayList<Event>();//TODO
+    }
+
+    @Override
+    public List<Event> getEventRating(Event event) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, RecommendationConstants.ASK_FOR_EVENT_RATING);
+            Bundle data = new Bundle();
+            data.putString("event", new Gson().toJson(event));
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return new ArrayList<Event>();//TODO
     }
 
     /**

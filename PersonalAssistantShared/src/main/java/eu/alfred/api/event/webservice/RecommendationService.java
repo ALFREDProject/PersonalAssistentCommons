@@ -33,4 +33,11 @@ public interface RecommendationService  {
     public List<Event> createEventRecommendationAnswer(Eventrating rating, UserProfile user);
 
 
+    @POST
+    @Consumes({ MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Path("/recommendationsRating/put")
+    public List<Event> getEventRating(Event event);
+
+
 }

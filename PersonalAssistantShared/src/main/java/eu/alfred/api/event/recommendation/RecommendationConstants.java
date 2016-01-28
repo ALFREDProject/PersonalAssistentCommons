@@ -5,6 +5,7 @@ package eu.alfred.api.event.recommendation;
  */
 public class RecommendationConstants {
     public static final int ASK_FOR_RECOMMENDATIONS = 11111;
-    public static final int GIVE_EVENT_RATING = 11112;
+    public static final int CREATE_EVENT_RATING = 11112;
+    public static final int ASK_FOR_EVENT_RATING = 11113;
 
 }
