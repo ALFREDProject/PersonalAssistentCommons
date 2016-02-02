@@ -12,4 +12,6 @@ public class CadeConstants {
     public static final int SET_CADE_BACKEND_URL_RESPONSE = 10006;
     public static final int GET_CADE_BACKEND_URL = 10007;
     public static final int GET_CADE_BACKEND_URL_RESPONSE = 10008;
+
+    public static final int TELL_BATTERY_STATUS = 10009;
 }

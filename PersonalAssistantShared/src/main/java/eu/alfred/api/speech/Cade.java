@@ -5,13 +5,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-
-import org.json.JSONArray;
-import org.json.JSONException;
+import android.util.Log;
 
 import eu.alfred.api.speech.responses.CadeResponse;
-import eu.alfred.api.storage.StorageConstants;
-import eu.alfred.api.storage.responses.BucketResponse;
 
 /**
  * Created by gilbe on 23.09.2015.
@@ -34,6 +30,7 @@ public class Cade {
                 //Client asked for a list of contacts. Service delivers them with this response Id
                 case CadeConstants.GET_CADE_BACKEND_URL_RESPONSE: {
                     Bundle data = msg.getData();
+                    Log.i("mssssg",msg.toString());
                     cadeResponse.OnSuccess(data.getString("CADE_BACKEND_URL", ""));
                     break;
                 }
@@ -93,6 +90,21 @@ public class Cade {
             Message msg = Message.obtain(null, CadeConstants.GET_CADE_BACKEND_URL);
             if (cadeResponse != null)
                 msg.replyTo = new Messenger(new ReadCadeResponse(cadeResponse));
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void TellBatteryStatus(String batteryStatus){
+        Bundle bundle = new Bundle();
+        bundle.putString("BATTERY_STATUS", batteryStatus);
+
+        if (messenger != null) {
+            Message msg = Message.obtain(null, CadeConstants.TELL_BATTERY_STATUS);
+            msg.setData(bundle);
             try {
                 messenger.send(msg);
             } catch (RemoteException e) {
