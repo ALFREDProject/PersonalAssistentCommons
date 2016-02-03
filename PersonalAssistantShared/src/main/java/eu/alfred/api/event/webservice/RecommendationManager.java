@@ -27,22 +27,12 @@ public class RecommendationManager extends Handler implements RecommendationServ
     }
 
 
+
     /**
-     * Give a feedback whether the user do attend or do NOT atted a certain event
-     * @param user The profile of the user
-     * @param attend boolean value whether the user attends (true) the event or not (false)
-     * @param eventID The event the user might attend
-     */
-    public void getEventRecommendationForUSer(UserProfile user, boolean attend, Event eventID) {
-        throw new UnsupportedOperationException("This is not implemented at the moment");
-    }
-    /**
-     * Gets all recommendations for a certain user
-     * @param user The user to get events for
-     * @return A list of specific events for that specific user
+     * @inheritDoc
      */
     @Override
-    public List<Event> getEventRecommendationForUSer(UserProfile user) {
+    public List<Event> getEventRecommendationForUser(UserProfile user) {
         if (messenger != null) {
             Message msg = Message.obtain(null, RecommendationConstants.ASK_FOR_RECOMMENDATIONS);
             Bundle data = new Bundle();
@@ -57,14 +47,12 @@ public class RecommendationManager extends Handler implements RecommendationServ
         return new ArrayList<>();//TODO
     }
 
+
     /**
-     * Sends a eventrating of the user to the manager to be stored for further recommonedations
-     * @param rating A rating object for the given event
-     * @param user The user to store events for
-     * @return
+     * @inheritDoc
      */
     @Override
-    public List<Event> createEventRecommendationAnswer(Eventrating rating, UserProfile user) {
+    public void createEventRecommendationAnswer(Eventrating rating, UserProfile user) {
         if (messenger != null) {
             Message msg = Message.obtain(null, RecommendationConstants.CREATE_EVENT_RATING);
             Bundle data = new Bundle();
@@ -77,11 +65,13 @@ public class RecommendationManager extends Handler implements RecommendationServ
                 e.printStackTrace();
             }
         }
-        return new ArrayList<Event>();//TODO
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
-    public List<Event> getEventRating(Event event) {
+    public Eventrating getEventRating(Event event) {
         if (messenger != null) {
             Message msg = Message.obtain(null, RecommendationConstants.ASK_FOR_EVENT_RATING);
             Bundle data = new Bundle();
@@ -93,7 +83,7 @@ public class RecommendationManager extends Handler implements RecommendationServ
                 e.printStackTrace();
             }
         }
-        return new ArrayList<Event>();//TODO
+        return new Eventrating();//TODO
     }
 
     /**
