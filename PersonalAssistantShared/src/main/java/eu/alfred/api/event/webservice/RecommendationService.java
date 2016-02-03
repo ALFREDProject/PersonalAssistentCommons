@@ -16,6 +16,7 @@ import eu.alfred.api.personalization.model.UserProfile;
  * Created by Tobias on 27/01/2016.
  */
 public interface RecommendationService  {
+
     /**
      * Gets eventrecomendations for the given user
      * @param user The user that is used to calculate the recommendation
@@ -26,7 +27,6 @@ public interface RecommendationService  {
     @Produces({ MediaType.APPLICATION_JSON })
     @Path("/recommendations/get")
     public List<Event> getEventRecommendationForUser(UserProfile user);
-
 
     /**
      * Receives an eventrating from a user to be used for further recommendations
