@@ -9,6 +9,6 @@ import org.json.JSONObject;
 public interface CadeResponse {
     public void OnSuccess(JSONObject response);
     public void OnSuccess(JSONArray response);
-    public void OnSuccess(String resposen);
+    public void OnSuccess(String response);
     public void OnError(Exception exception);
 }
