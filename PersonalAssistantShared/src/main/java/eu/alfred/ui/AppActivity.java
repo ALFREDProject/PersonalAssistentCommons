@@ -1,11 +1,11 @@
 package eu.alfred.ui;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,13 +16,14 @@ import eu.alfred.api.PersonalAssistant;
 import eu.alfred.api.PersonalAssistantConnection;
 import eu.alfred.api.proxies.interfaces.ICadeCommand;
 import eu.alfred.api.speech.Cade;
+import eu.alfred.api.speech.CadeConstants;
 import eu.alfred.api.speech.CadeSpeechStatus;
 import eu.alfred.personalassistant.sharedlibrary.R;
 
 /**
  * Created by Gary on 04.02.2016.
  */
-public abstract class AppActivity extends Activity implements ICadeCommand{
+public abstract class AppActivity extends FragmentActivity implements ICadeCommand {
 
     public PersonalAssistant personalAssistant;
     public Cade cade;
@@ -72,10 +73,24 @@ public abstract class AppActivity extends Activity implements ICadeCommand{
         Log.i("onNewIntent", getPackageName());
         super.onNewIntent(intent);
         setIntent(intent);
+
+        int methodToCall = intent.getIntExtra("method",0);
         String command = intent.getStringExtra("command");
         HashMap args = (HashMap) intent.getSerializableExtra("args");
-        if(command!=null) {
-            performAction(command, args);
+
+        switch (methodToCall) {
+            case CadeConstants.IS_ACTION:
+                performAction(command,args);
+                break;
+            case CadeConstants.IS_WHQUERY:
+                performWhQuery(command,args);
+                break;
+            case CadeConstants.IS_VALIDITY:
+                performValidity(command,args);
+                break;
+            case CadeConstants.IS_ENTITYRECOGNIZER:
+                performEntityRecognizer(command,args);
+                break;
         }
     }
 
