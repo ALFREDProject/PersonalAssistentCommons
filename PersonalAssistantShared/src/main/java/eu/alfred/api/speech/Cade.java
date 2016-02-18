@@ -7,7 +7,11 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import eu.alfred.api.speech.responses.CadeResponse;
+import eu.alfred.api.speech.util.RequestResultEntityRecognizer;
+import eu.alfred.api.speech.util.RequestResultWHQuery;
 
 /**
  * Created by gilbe on 23.09.2015.
@@ -113,33 +117,101 @@ public class Cade {
         }
     }
 
-    public void resultAction(String resultWHQuery) {
-        result("RESULT_ACTION", resultWHQuery, CadeConstants.RESULT_ACTION);
+    /**
+     * Used to return a value to the server related to an Action
+     * Returns true if the message has been sent to the PA
+     *
+     * @param requestResultWHQuery
+     * @return
+     */
+    public boolean resultAction(boolean requestResultWHQuery) {
+        return resultString("RESULT_ACTION", "" + requestResultWHQuery, CadeConstants.RESULT_ACTION);
     }
 
-    public void resultWHQuery(String resultWHQuery) {
-        result("RESULT_WH_QUERY", resultWHQuery, CadeConstants.RESULT_WH_QUERY);
+    /**
+     * Used to return a value to the server related to a Validity
+     * Returns true if the message has been sent to the PA
+     *
+     * @param requestResultWHQuery
+     * @return
+     */
+    public boolean resultValidity(boolean requestResultWHQuery) {
+        return resultString("RESULT_VALIDITY", "" + requestResultWHQuery, CadeConstants.RESULT_VALIDITY);
     }
 
-    public void resultValidity(String resultWHQuery) {
-        result("RESULT_VALIDITY", resultWHQuery, CadeConstants.RESULT_VALIDITY);
-    }
-
-    public void resultEntityRecognizer(String resultWHQuery) {
-        result("RESULT_ENTITY_RECOGNIZER", resultWHQuery, CadeConstants.RESULT_ENTITY_RECOGNIZER);
-    }
-
-    private void result(String key, String resultWHQuery, int cadeConstant) {
+    private boolean resultString(String key, String requestResultWHQuery, int cadeConstant) {
         Bundle bundle = new Bundle();
-        bundle.putString(key, resultWHQuery);
+        bundle.putString(key, requestResultWHQuery);
         if (messenger != null) {
             Message msg = Message.obtain(null, cadeConstant);
             msg.setData(bundle);
             try {
                 messenger.send(msg);
+                return true;
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
+        return false;
+    }
+
+    /**
+     * Used to return a value to the server related to a WHQuery
+     * Returns true if the message has been sent to the PA
+     *
+     * @param requestResultWHQuery
+     * @return
+     */
+    public boolean resultWHQuery(RequestResultWHQuery requestResultWHQuery) {
+        String jsonData = "";
+        try {
+            Gson gson = new Gson();
+            jsonData = gson.toJson(requestResultWHQuery);
+        } catch (Exception ignored) {
+            return false;
+        }
+        Bundle bundle = new Bundle();
+        bundle.putString("RESULT_WH_QUERY", jsonData);
+        if (messenger != null) {
+            Message msg = Message.obtain(null, CadeConstants.RESULT_WH_QUERY);
+            msg.setData(bundle);
+            try {
+                messenger.send(msg);
+                return true;
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Used to return a value to the server related to an Entity Recognizer
+     * Returns true if the message has been sent to the PA
+     *
+     * @param requestResultEntityRecognizer
+     * @return
+     */
+    public boolean resultEntityRecognizer(RequestResultEntityRecognizer requestResultEntityRecognizer) {
+        String jsonData = "";
+        try {
+            Gson gson = new Gson();
+            jsonData = gson.toJson(requestResultEntityRecognizer);
+        } catch (Exception ignored) {
+            return false;
+        }
+        Bundle bundle = new Bundle();
+        bundle.putString("RESULT_ENTITY_RECOGNIZER", jsonData);
+        if (messenger != null) {
+            Message msg = Message.obtain(null, CadeConstants.RESULT_ENTITY_RECOGNIZER);
+            msg.setData(bundle);
+            try {
+                messenger.send(msg);
+                return true;
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 }
