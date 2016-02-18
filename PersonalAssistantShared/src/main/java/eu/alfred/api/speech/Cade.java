@@ -7,11 +7,12 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import eu.alfred.api.speech.responses.CadeResponse;
-import eu.alfred.api.speech.util.RequestResultEntityRecognizer;
-import eu.alfred.api.speech.util.RequestResultWHQuery;
 
 /**
  * Created by gilbe on 23.09.2015.
@@ -102,12 +103,12 @@ public class Cade {
         }
     }
 
-    public void TellBatteryStatus(String batteryStatus) {
+    public void sendActionResult(boolean state) {
         Bundle bundle = new Bundle();
-        bundle.putString("BATTERY_STATUS", batteryStatus);
+        bundle.putBoolean(CadeConstants.ACTION_STATE, state);
 
         if (messenger != null) {
-            Message msg = Message.obtain(null, CadeConstants.TELL_BATTERY_STATUS);
+            Message msg = Message.obtain(null, CadeConstants.RESULT_ACTION);
             msg.setData(bundle);
             try {
                 messenger.send(msg);
@@ -117,101 +118,56 @@ public class Cade {
         }
     }
 
-    /**
-     * Used to return a value to the server related to an Action
-     * Returns true if the message has been sent to the PA
-     *
-     * @param requestResultWHQuery
-     * @return
-     */
-    public boolean resultAction(boolean requestResultWHQuery) {
-        return resultString("RESULT_ACTION", "" + requestResultWHQuery, CadeConstants.RESULT_ACTION);
-    }
-
-    /**
-     * Used to return a value to the server related to a Validity
-     * Returns true if the message has been sent to the PA
-     *
-     * @param requestResultWHQuery
-     * @return
-     */
-    public boolean resultValidity(boolean requestResultWHQuery) {
-        return resultString("RESULT_VALIDITY", "" + requestResultWHQuery, CadeConstants.RESULT_VALIDITY);
-    }
-
-    private boolean resultString(String key, String requestResultWHQuery, int cadeConstant) {
+    public void sendWHQueryResult(List<String> resultList) {
         Bundle bundle = new Bundle();
-        bundle.putString(key, requestResultWHQuery);
+        bundle.putStringArrayList(CadeConstants.WHQUERY_LIST, new ArrayList<String>(resultList));
+
         if (messenger != null) {
-            Message msg = Message.obtain(null, cadeConstant);
+            Message msg = Message.obtain(null, CadeConstants.RESULT_VALIDITY);
             msg.setData(bundle);
             try {
                 messenger.send(msg);
-                return true;
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
-        return false;
     }
 
-    /**
-     * Used to return a value to the server related to a WHQuery
-     * Returns true if the message has been sent to the PA
-     *
-     * @param requestResultWHQuery
-     * @return
-     */
-    public boolean resultWHQuery(RequestResultWHQuery requestResultWHQuery) {
-        String jsonData = "";
-        try {
-            Gson gson = new Gson();
-            jsonData = gson.toJson(requestResultWHQuery);
-        } catch (Exception ignored) {
-            return false;
-        }
+    public void sendValidityResult(boolean state) {
         Bundle bundle = new Bundle();
-        bundle.putString("RESULT_WH_QUERY", jsonData);
+        bundle.putBoolean(CadeConstants.VALIDITY_STATE, state);
+
         if (messenger != null) {
-            Message msg = Message.obtain(null, CadeConstants.RESULT_WH_QUERY);
+            Message msg = Message.obtain(null, CadeConstants.RESULT_VALIDITY);
             msg.setData(bundle);
             try {
                 messenger.send(msg);
-                return true;
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
-        return false;
     }
 
-    /**
-     * Used to return a value to the server related to an Entity Recognizer
-     * Returns true if the message has been sent to the PA
-     *
-     * @param requestResultEntityRecognizer
-     * @return
-     */
-    public boolean resultEntityRecognizer(RequestResultEntityRecognizer requestResultEntityRecognizer) {
-        String jsonData = "";
-        try {
-            Gson gson = new Gson();
-            jsonData = gson.toJson(requestResultEntityRecognizer);
-        } catch (Exception ignored) {
-            return false;
-        }
+    public void sendEntityRecognizerResult(List<Map<String,String>> resultList) {
         Bundle bundle = new Bundle();
-        bundle.putString("RESULT_ENTITY_RECOGNIZER", jsonData);
+
+        ArrayList<HashMap<String,String>> result = new ArrayList<HashMap<String,String>>();
+
+        for(Map<String, String> map : resultList) {
+            HashMap<String, String> temp = new HashMap<>(map);
+            result.add(temp);
+        }
+
+        bundle.putSerializable(CadeConstants.ENTITYRECOGNIZER_LIST, result);
+
         if (messenger != null) {
-            Message msg = Message.obtain(null, CadeConstants.RESULT_ENTITY_RECOGNIZER);
+            Message msg = Message.obtain(null, CadeConstants.RESULT_VALIDITY);
             msg.setData(bundle);
             try {
                 messenger.send(msg);
-                return true;
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
-        return false;
     }
 }

@@ -10,6 +10,16 @@ public class CadeConstants {
     public static final int IS_VALIDITY = 12003;
     public static final int IS_ENTITYRECOGNIZER = 12004;
 
+    public static final int RESULT_ACTION = 12005;
+    public static final int RESULT_WHQUERY = 12006;
+    public static final int RESULT_VALIDITY = 12007;
+    public static final int RESULT_ENTITYRECOGNIZER = 12008;
+
+    public static final String ACTION_STATE = "ACTION_STATE";
+    public static final String WHQUERY_LIST = "WHQUERY_LIST";
+    public static final String VALIDITY_STATE = "VALIDITY_STATE";
+    public static final String ENTITYRECOGNIZER_LIST = "ENTITYRECOGNIZER_LIST";
+
     public static final int START_LISTENING = 10001;
     public static final int START_LISTENING_RESPONSE = 10002;
     public static final int STOP_LISTENING = 10003;
@@ -18,10 +28,4 @@ public class CadeConstants {
     public static final int SET_CADE_BACKEND_URL_RESPONSE = 10006;
     public static final int GET_CADE_BACKEND_URL = 10007;
     public static final int GET_CADE_BACKEND_URL_RESPONSE = 10008;
-
-    public static final int TELL_BATTERY_STATUS = 10009;
-    public static final int RESULT_ACTION = 10010;
-    public static final int RESULT_WH_QUERY = 10011;
-    public static final int RESULT_VALIDITY = 10012;
-    public static final int RESULT_ENTITY_RECOGNIZER = 10013;
 }
