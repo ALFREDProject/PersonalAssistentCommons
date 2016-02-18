@@ -44,6 +44,32 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
         }
     };
 
+    private BroadcastReceiver eventReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int methodToCall = intent.getIntExtra("method", 0);
+            String command = intent.getStringExtra("command");
+            HashMap args = (HashMap) intent.getSerializableExtra("args");
+
+            switch (methodToCall) {
+                case CadeConstants.IS_ACTION:
+                    performAction(command, args);
+                    break;
+                case CadeConstants.IS_WHQUERY:
+                    performWhQuery(command, args);
+                    break;
+                case CadeConstants.IS_VALIDITY:
+                    performValidity(command, args);
+                    break;
+                case CadeConstants.IS_ENTITYRECOGNIZER:
+                    performEntityRecognizer(command, args);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +137,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
         super.onPause();
         unregisterReceiver(readyToSpeakReceiver);
         unregisterReceiver(endSpeakReceiver);
+        unregisterReceiver(eventReceiver);
     }
 
     protected void onResume() {
@@ -122,6 +149,10 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
         IntentFilter endSpeakFilter = new IntentFilter();
         endSpeakFilter.addAction(getPackageName() + "." + CadeSpeechStatus.END_OF_SPEECH);
         registerReceiver(endSpeakReceiver, endSpeakFilter);
+
+        IntentFilter eventFilter = new IntentFilter();
+        eventFilter.addAction(getPackageName() + "." + "EVENT");
+        registerReceiver(eventReceiver, eventFilter);
     }
 
     @Override
