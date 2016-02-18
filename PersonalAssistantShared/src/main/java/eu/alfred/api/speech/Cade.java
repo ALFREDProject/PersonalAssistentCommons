@@ -123,7 +123,7 @@ public class Cade {
         bundle.putStringArrayList(CadeConstants.WHQUERY_LIST, new ArrayList<String>(resultList));
 
         if (messenger != null) {
-            Message msg = Message.obtain(null, CadeConstants.RESULT_VALIDITY);
+            Message msg = Message.obtain(null, CadeConstants.RESULT_WHQUERY);
             msg.setData(bundle);
             try {
                 messenger.send(msg);
@@ -161,7 +161,7 @@ public class Cade {
         bundle.putSerializable(CadeConstants.ENTITYRECOGNIZER_LIST, result);
 
         if (messenger != null) {
-            Message msg = Message.obtain(null, CadeConstants.RESULT_VALIDITY);
+            Message msg = Message.obtain(null, CadeConstants.RESULT_ENTITYRECOGNIZER);
             msg.setData(bundle);
             try {
                 messenger.send(msg);
