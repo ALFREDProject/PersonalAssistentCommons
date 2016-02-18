@@ -18,19 +18,19 @@ public class Cade {
     private class ReadCadeResponse extends Handler {
         private CadeResponse cadeResponse;
 
-        public ReadCadeResponse(CadeResponse cadeResponse){
+        public ReadCadeResponse(CadeResponse cadeResponse) {
             this.cadeResponse = cadeResponse;
         }
 
         @Override
-        public void handleMessage(Message msg){
+        public void handleMessage(Message msg) {
             int respCode = msg.what;
 
             switch (respCode) {
                 //Client asked for a list of contacts. Service delivers them with this response Id
                 case CadeConstants.GET_CADE_BACKEND_URL_RESPONSE: {
                     Bundle data = msg.getData();
-                    Log.i("mssssg",msg.toString());
+                    Log.i("mssssg", msg.toString());
                     cadeResponse.OnSuccess(data.getString("CADE_BACKEND_URL", ""));
                     break;
                 }
@@ -38,11 +38,11 @@ public class Cade {
         }
     }
 
-    public Cade(Messenger messenger){
+    public Cade(Messenger messenger) {
         this.messenger = messenger;
     }
 
-    public void StartListening(String callerName){
+    public void StartListening(String callerName) {
         if (messenger != null) {
             Message msg = Message.obtain(null, CadeConstants.START_LISTENING);
             Bundle data = new Bundle();
@@ -56,7 +56,7 @@ public class Cade {
         }
     }
 
-    public void StopListening(String callerName){
+    public void StopListening(String callerName) {
         if (messenger != null) {
             Message msg = Message.obtain(null, CadeConstants.STOP_LISTENING);
             Bundle data = new Bundle();
@@ -70,7 +70,7 @@ public class Cade {
         }
     }
 
-    public void SetCadeBackendUrl(String url){
+    public void SetCadeBackendUrl(String url) {
         Bundle bundle = new Bundle();
         bundle.putString("CADE_BACKEND_URL", url);
 
@@ -85,7 +85,7 @@ public class Cade {
         }
     }
 
-    public void GetCadeBackendUrl(CadeResponse cadeResponse){
+    public void GetCadeBackendUrl(CadeResponse cadeResponse) {
         if (messenger != null) {
             Message msg = Message.obtain(null, CadeConstants.GET_CADE_BACKEND_URL);
             if (cadeResponse != null)
@@ -98,12 +98,42 @@ public class Cade {
         }
     }
 
-    public void TellBatteryStatus(String batteryStatus){
+    public void TellBatteryStatus(String batteryStatus) {
         Bundle bundle = new Bundle();
         bundle.putString("BATTERY_STATUS", batteryStatus);
 
         if (messenger != null) {
             Message msg = Message.obtain(null, CadeConstants.TELL_BATTERY_STATUS);
+            msg.setData(bundle);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void resultAction(String resultWHQuery) {
+        result("RESULT_ACTION", resultWHQuery, CadeConstants.RESULT_ACTION);
+    }
+
+    public void resultWHQuery(String resultWHQuery) {
+        result("RESULT_WH_QUERY", resultWHQuery, CadeConstants.RESULT_WH_QUERY);
+    }
+
+    public void resultValidity(String resultWHQuery) {
+        result("RESULT_VALIDITY", resultWHQuery, CadeConstants.RESULT_VALIDITY);
+    }
+
+    public void resultEntityRecognizer(String resultWHQuery) {
+        result("RESULT_ENTITY_RECOGNIZER", resultWHQuery, CadeConstants.RESULT_ENTITY_RECOGNIZER);
+    }
+
+    private void result(String key, String resultWHQuery, int cadeConstant) {
+        Bundle bundle = new Bundle();
+        bundle.putString(key, resultWHQuery);
+        if (messenger != null) {
+            Message msg = Message.obtain(null, cadeConstant);
             msg.setData(bundle);
             try {
                 messenger.send(msg);

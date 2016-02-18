@@ -20,4 +20,8 @@ public class CadeConstants {
     public static final int GET_CADE_BACKEND_URL_RESPONSE = 10008;
 
     public static final int TELL_BATTERY_STATUS = 10009;
+    public static final int RESULT_ACTION = 10010;
+    public static final int RESULT_WH_QUERY = 10011;
+    public static final int RESULT_VALIDITY = 10012;
+    public static final int RESULT_ENTITY_RECOGNIZER = 10013;
 }
