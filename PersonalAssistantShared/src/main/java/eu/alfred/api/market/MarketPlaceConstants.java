@@ -1,6 +1,6 @@
 package eu.alfred.api.market;
 
-public class MarketConstants {
+public class MarketPlaceConstants {
 
   public static final int GET_APP_DETAIL = 857910001;
   public static final int GET_APP_LIST = 857910002;

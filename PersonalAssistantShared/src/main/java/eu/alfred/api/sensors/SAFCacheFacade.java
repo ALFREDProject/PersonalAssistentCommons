@@ -11,13 +11,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import eu.alfred.api.sensors.responses.SensorDataResponse;
-import eu.alfred.api.storage.StorageConstants;
-import eu.alfred.api.storage.responses.BucketResponse;
 
 /**
  * Created by gilbe on 21.09.2015.
  */
-public class SAFFacade {
+public class SAFCacheFacade {
     private Messenger messenger;
     private SensorDataResponseHandler sensorDataResponseHandler;
 
@@ -34,7 +32,7 @@ public class SAFFacade {
 
             switch (respCode) {
                 //Client asked for a list of contacts. Service delivers them with this response Id
-                case SAFFacadeConstants.READ_LIVE_DATA_RESPONSE: {
+                case SAFCacheFacadeConstants.READ_LIVE_DATA_RESPONSE: {
                     JSONObject jsonResponse = null;
 
                     try {
@@ -73,7 +71,7 @@ public class SAFFacade {
 
         sensorDataResponseHandler = new SensorDataResponseHandler(sensorDataResponse);
 
-        Message msg = Message.obtain(null, SAFFacadeConstants.READ_LIVE_DATA);
+        Message msg = Message.obtain(null, SAFCacheFacadeConstants.READ_LIVE_DATA);
         msg.replyTo = new Messenger(sensorDataResponseHandler);
         Bundle msgBundle = new Bundle();
         msgBundle.putString("Uri",sensorUri);
@@ -86,7 +84,7 @@ public class SAFFacade {
         }
     }
 
-    public SAFFacade(Messenger messenger) throws IllegalArgumentException {
+    public SAFCacheFacade(Messenger messenger) throws IllegalArgumentException {
         this.messenger = messenger;
 
         if (messenger == null) throw new IllegalArgumentException("messenger should not be null!");

@@ -118,9 +118,16 @@ public class Cade {
         }
     }
 
-    public void sendWHQueryResult(List<String> resultList) {
+    public void sendWHQueryResult(List<Map<String, String>> resultList) {
         Bundle bundle = new Bundle();
-        bundle.putStringArrayList(CadeConstants.WHQUERY_LIST, new ArrayList<String>(resultList));
+
+        ArrayList<HashMap<String,String>> result = new ArrayList<HashMap<String,String>>();
+
+        for(Map<String, String> map : resultList) {
+            HashMap<String, String> temp = new HashMap<>(map);
+            result.add(temp);
+        }
+        bundle.putSerializable(CadeConstants.WHQUERY_LIST, result);
 
         if (messenger != null) {
             Message msg = Message.obtain(null, CadeConstants.RESULT_WHQUERY);

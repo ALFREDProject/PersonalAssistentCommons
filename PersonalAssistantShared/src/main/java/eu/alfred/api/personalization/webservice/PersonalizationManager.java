@@ -1,131 +1,509 @@
 package eu.alfred.api.personalization.webservice;
 
-import java.util.List;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import eu.alfred.api.personalization.model.Contact;
-import eu.alfred.api.personalization.model.HistoricalEntry;
 import eu.alfred.api.personalization.model.Requesters;
 import eu.alfred.api.personalization.model.UserProfile;
+import eu.alfred.api.personalization.responses.PersonalizationResponse;
 
 /**
  * Created by Tobias on 27/01/2016.
  */
-public class PersonalizationManager implements PersonalizationManagerDBService {
-    @Override
-    public Response createUserProfile(UserProfile newAlfredUser) {
+public class PersonalizationManager {
+
+    private Messenger messenger;
+
+    private class PersonalizationSuccessResponse extends Handler {
+        private PersonalizationResponse personalizationSuccessResponse;
+
+        public PersonalizationSuccessResponse(PersonalizationResponse personalizationSuccessResponse) {
+            this.personalizationSuccessResponse = personalizationSuccessResponse;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            int respCode = msg.what;
+
+            switch (respCode) {
+                case PersonalizationConstants.CREATE_USER_PROFILE_RESPONSE:
+                case PersonalizationConstants.UPDATE_USER_PROFILE_RESPONSE:
+                case PersonalizationConstants.DELETE_USER_PROFILE_RESPONSE:
+                case PersonalizationConstants.CREATE_USER_CONTACT_RESPONSE:
+                case PersonalizationConstants.UPDATE_USER_CONTACT_RESPONSE:
+                case PersonalizationConstants.DELETE_USER_CONTACT_RESPONSE:
+                case PersonalizationConstants.CREATE_REQUESTER_RESPONSE:
+                case PersonalizationConstants.UPDATE_REQUESTER_RESPONSE:
+                case PersonalizationConstants.DELETE_REQUESTER_RESPONSE:
+
+                    JSONObject jsonResponse = null;
+
+                    try {
+                        jsonResponse = new JSONObject(msg.getData().getString("JsonData", "{}"));
+                        personalizationSuccessResponse.OnSuccess(jsonResponse);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        personalizationSuccessResponse.OnError(e);
+                    }
+                    break;
+            }
+        }
+    }
+
+    private class PersonalizationDataResponse extends Handler {
+        private PersonalizationResponse personalizationDataResponse;
+
+        public PersonalizationDataResponse(PersonalizationResponse personalizationDataResponse) {
+            this.personalizationDataResponse = personalizationDataResponse;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            int respCode = msg.what;
+
+            switch (respCode) {
+                case PersonalizationConstants.CREATE_USER_PROFILE_FILTER_RESPONSE:
+                case PersonalizationConstants.CREATE_USER_PROFILE_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_USER_CONTACTS_BY_CRITERIA_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_USER_PROFILES_LAST_SYNC_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_USER_PROFILE_RESPONSE:
+                case PersonalizationConstants.UPDATE_REQUESTER_RESPONSE:
+                case PersonalizationConstants.UPDATE_USER_CONTACT_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_USER_PROFILES_BY_CRITERIA_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_REQUESTER_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_USER_REQUESTER_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_USER_CONTACTS_RESPONSE:
+                    JSONArray jsonResponse = null;
+
+                    try {
+                        jsonResponse = new JSONArray(msg.getData().getString("response"));
+                        personalizationDataResponse.OnSuccess(jsonResponse);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        personalizationDataResponse.OnError(e);
+                    }
+                    break;
+            }
+        }
+    }
+
+    public PersonalizationManager(Messenger messenger) {
+        this.messenger = messenger;
+    }
+
+    public void createUserProfile(UserProfile newAlfredUser, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.CREATE_USER_PROFILE);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+            data.putSerializable("newAlfredUser", newAlfredUser);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void retrieveUserProfile(String userID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILE);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", userID);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void retrieveUserProfileSensored(String userID, String searchUsersCriteria, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILES_BY_CRITERIA);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", userID);
+            data.putString("searchUsersCriteria", searchUsersCriteria);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void retrieveUserProfilesFilter(String userID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.CREATE_USER_PROFILE_FILTER);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", userID);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void updateUserProfile(String userID, String valuesToUpdate, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_USER_PROFILE);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", userID);
+            data.putString("valuesToUpdate", valuesToUpdate);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void deleteUserProfile(String userID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.DELETE_USER_PROFILE);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", userID);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /*public Boolean checkUsernameAvailability(String username) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, S);
+            Bundle data = new Bundle();
+            data.putString("username", username);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }*/
+
+    public void getUnsynchronizedUserProfiles(String lastSyncDate, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILES_LAST_SYNC);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("lastSyncDate", lastSyncDate);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void createUserContact(String userID, Contact newContact, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.CREATE_USER_CONTACT);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", userID);
+            data.putSerializable("newContact", newContact);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void retrieveAllUserContacts(String userID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_CONTACTS);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", userID);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void retrieveUserContacts(String userID, String searchContactsCriteria, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_CONTACTS_BY_CRITERIA);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", userID);
+            data.putString("searchContactsCriteria", searchContactsCriteria);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void updateUserContact(String contactID, String valuesToUpdate, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_USER_CONTACT);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", contactID);
+            data.putString("searchContactsCriteria", valuesToUpdate);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void deleteUserContact(String contactID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.DELETE_USER_CONTACT);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", contactID);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /*
+    public Response createUserHistoricalEntry(String userID, HistoricalEntry newHistoricalEntry) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, CadeConstants.START_LISTENING);
+            Bundle data = new Bundle();
+            data.putString("id", userID);
+            data.putSerializable("newHistoricalEntry",newHistoricalEntry);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
         return null;
     }
 
-    @Override
-    public List<UserProfile> retrieveUserProfile(@PathParam("id") String userID) {
-        return null;
-    }
-
-    @Override
-    public List<UserProfile> retrieveUserProfileSensored(String searchUsersCriteria) {
-        return null;
-    }
-
-    @Override
-    public List<UserProfile> retrieveUserProfiles(String searchUsersCriteria) {
-        return null;
-    }
-
-    @Override
-    public Response updateUserProfile(@PathParam("id") String userID, String valuesToUpdate) {
-        return null;
-    }
-
-    @Override
-    public Response deleteUserProfile(@PathParam("id") String userID) {
-        return null;
-    }
-
-    @Override
-    public Boolean checkUsernameAvailability(@PathParam("username") String username) {
-        return null;
-    }
-
-    @Override
-    public List<UserProfile> getUnsynchronizedUserProfiles(@PathParam("lastSyncDate") String lastSyncDate) {
-        return null;
-    }
-
-    @Override
-    public Response createUserContact(@PathParam("id") String userID, Contact newContact) {
-        return null;
-    }
-
-    @Override
-    public List<Contact> retrieveAllUserContacts(@PathParam("id") String userID) {
-        return null;
-    }
-
-    @Override
-    public List<Contact> retrieveUserContacts(@PathParam("id") String userID, String searchContactsCriteria) {
-        return null;
-    }
-
-    @Override
-    public Response updateUserContact(@PathParam("id") String contactID, String valuesToUpdate) {
-        return null;
-    }
-
-    @Override
-    public Response deleteUserContact(@PathParam("id") String contactID) {
-        return null;
-    }
-
-    @Override
-    public Response createUserHistoricalEntry(@PathParam("id") String userID, HistoricalEntry newHistoricalEntry) {
-        return null;
-    }
-
-    @Override
     public List<HistoricalEntry> retrieveAllUserHistoricalEntries(@PathParam("id") String userID) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, CadeConstants.START_LISTENING);
+            Bundle data = new Bundle();
+            data.putString("id", userID);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
         return null;
     }
 
-    @Override
     public List<HistoricalEntry> retrieveUserHistoricalEntries(@PathParam("id") String userID, String searchHistoricalEntriesCriteria) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, CadeConstants.START_LISTENING);
+            Bundle data = new Bundle();
+            data.putString("id", userID);
+            data.putString("searchHistoricalEntriesCriteria",searchHistoricalEntriesCriteria);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
         return null;
     }
 
-    @Override
     public Response updateUserHistoricalEntries(@PathParam("id") String historicalEntryID, String valuesToUpdate) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, CadeConstants.START_LISTENING);
+            Bundle data = new Bundle();
+            data.putString("id", historicalEntryID);
+            data.putString("valuesToUpdate",valuesToUpdate);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
         return null;
     }
 
-    @Override
     public Response deleteUserHistoricalEntries(@PathParam("id") String historicalEntryID) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, CadeConstants.START_LISTENING);
+            Bundle data = new Bundle();
+            data.putString("id", historicalEntryID);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
         return null;
     }
+   */
 
-    @Override
-    public Response createRequester(Requesters newServicesRequester) {
-        return null;
+    public void createRequester(Requesters newServicesRequester, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.CREATE_REQUESTER);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+            data.putSerializable("newServicesRequester", newServicesRequester);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    @Override
-    public List<Requesters> retrieveRequester(@PathParam("id") String requesterId) {
-        return null;
+    public void retrieveRequester(String requesterId, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_REQUESTER);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", requesterId);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    @Override
-    public List<Requesters> retrieveRequester(@PathParam("requesterAlfredId") String requesterAlfredId, @PathParam("targetAlfredId") String targetAlfredId) {
-        return null;
+    public void retrieveRequesterByTarget(String requesterAlfredId, String targetAlfredId, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_REQUESTER);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("requesterAlfredId", requesterAlfredId);
+            data.putString("targetAlfredId", targetAlfredId);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    @Override
-    public Response updateRequester(@PathParam("id") String requesterId, String valuesToUpdate) {
-        return null;
+    public void updateRequester(String requesterId, String valuesToUpdate, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_REQUESTER);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", requesterId);
+            data.putString("valuesToUpdate", valuesToUpdate);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    @Override
-    public Response deleteRequester(@PathParam("id") String requesterId) {
-        return null;
+    public void deleteRequester(String requesterId, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.DELETE_REQUESTER);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+            data.putString("id", requesterId);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

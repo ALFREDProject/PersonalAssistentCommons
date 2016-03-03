@@ -1,8 +1,9 @@
 package eu.alfred.api.personalization.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class UserProfile {
+public class UserProfile implements Serializable {
 
 	private String id;
 	private String firstName;

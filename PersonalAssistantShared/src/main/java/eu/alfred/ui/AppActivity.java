@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Messenger;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,10 +15,16 @@ import java.util.HashMap;
 
 import eu.alfred.api.PersonalAssistant;
 import eu.alfred.api.PersonalAssistantConnection;
+import eu.alfred.api.event.webservice.EventManager;
+import eu.alfred.api.gamemanager.GameManager;
+import eu.alfred.api.market.MarketPlace;
+import eu.alfred.api.personalization.webservice.PersonalizationManager;
 import eu.alfred.api.proxies.interfaces.ICadeCommand;
+import eu.alfred.api.sensors.SAFCacheFacade;
 import eu.alfred.api.speech.Cade;
 import eu.alfred.api.speech.CadeConstants;
 import eu.alfred.api.speech.CadeSpeechStatus;
+import eu.alfred.api.storage.CloudStorage;
 import eu.alfred.personalassistant.sharedlibrary.R;
 
 /**
@@ -27,6 +34,12 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
 
     public PersonalAssistant personalAssistant;
     public Cade cade;
+    public GameManager gameManager;
+    public MarketPlace marketPlace;
+    public EventManager eventManager;
+    public SAFCacheFacade safFacade;
+    public CloudStorage cloudStorage;
+    public PersonalizationManager personalizationManager;
 
     public CircleButton circleButton;
 
@@ -81,7 +94,14 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
         personalAssistant.setOnPersonalAssistantConnectionListener(new PersonalAssistantConnection() {
             @Override
             public void OnConnected() {
-                cade = new Cade(personalAssistant.getMessenger());
+                Messenger msg = personalAssistant.getMessenger();
+                cade = new Cade(msg);
+                gameManager = new GameManager(msg);
+                marketPlace = new MarketPlace(msg);
+                eventManager = new EventManager(msg);
+                safFacade = new SAFCacheFacade(msg);
+                cloudStorage = new CloudStorage(msg);
+                personalizationManager = new PersonalizationManager(msg);
                 onNewIntent(getIntent());
             }
 

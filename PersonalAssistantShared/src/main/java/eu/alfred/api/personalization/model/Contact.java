@@ -1,10 +1,11 @@
 package eu.alfred.api.personalization.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class Contact {
+public class Contact implements Serializable {
 
 	private String id;
 	private String alfredUserName; // contacts can be alfred users, we point to this user  

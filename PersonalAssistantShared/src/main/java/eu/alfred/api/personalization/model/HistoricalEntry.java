@@ -1,9 +1,10 @@
 package eu.alfred.api.personalization.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-public class HistoricalEntry {
+public class HistoricalEntry implements Serializable {
 
 	private String id;
 	private String userID;
