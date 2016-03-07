@@ -9,8 +9,6 @@ import android.os.Messenger;
 
 import java.util.ArrayList;
 
-import eu.alfred.api.storage.CloudStorage;
-
 /**
  * Created by Daniel on 21.04.2015.
  */

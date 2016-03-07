@@ -20,7 +20,7 @@ import eu.alfred.api.gamemanager.GameManager;
 import eu.alfred.api.market.MarketPlace;
 import eu.alfred.api.personalization.webservice.PersonalizationManager;
 import eu.alfred.api.proxies.interfaces.ICadeCommand;
-import eu.alfred.api.sensors.SAFCacheFacade;
+import eu.alfred.api.sensors.SAFDataFacade;
 import eu.alfred.api.speech.Cade;
 import eu.alfred.api.speech.CadeConstants;
 import eu.alfred.api.speech.CadeSpeechStatus;
@@ -37,7 +37,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
     public GameManager gameManager;
     public MarketPlace marketPlace;
     public EventManager eventManager;
-    public SAFCacheFacade safFacade;
+    public SAFDataFacade safFacade;
     public CloudStorage cloudStorage;
     public PersonalizationManager personalizationManager;
 
@@ -99,7 +99,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
                 gameManager = new GameManager(msg);
                 marketPlace = new MarketPlace(msg);
                 eventManager = new EventManager(msg);
-                safFacade = new SAFCacheFacade(msg);
+                safFacade = new SAFDataFacade(msg);
                 cloudStorage = new CloudStorage(msg);
                 personalizationManager = new PersonalizationManager(msg);
                 onNewIntent(getIntent());
@@ -182,7 +182,13 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
             ButtonGotPressed();
     }
 
-    public class CircleTouchListener implements View.OnTouchListener {
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+    }
+
+
+        public class CircleTouchListener implements View.OnTouchListener {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {

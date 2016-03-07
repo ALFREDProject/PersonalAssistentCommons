@@ -1,21 +1,9 @@
 package eu.alfred.api.sensors;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
-import android.util.Base64;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import eu.alfred.api.sensors.responses.SensorDataResponse;
-
 /**
  * Created by gilbe on 21.09.2015.
  */
-public class SAFCacheFacade {
+public class SAFFacadeOld {/*
     private Messenger messenger;
     private SensorDataResponseHandler sensorDataResponseHandler;
 
@@ -32,7 +20,7 @@ public class SAFCacheFacade {
 
             switch (respCode) {
                 //Client asked for a list of contacts. Service delivers them with this response Id
-                case SAFCacheFacadeConstants.READ_LIVE_DATA_RESPONSE: {
+                case SAFFacadeConstants.READ_LIVE_DATA_RESPONSE: {
                     JSONObject jsonResponse = null;
 
                     try {
@@ -71,7 +59,7 @@ public class SAFCacheFacade {
 
         sensorDataResponseHandler = new SensorDataResponseHandler(sensorDataResponse);
 
-        Message msg = Message.obtain(null, SAFCacheFacadeConstants.READ_LIVE_DATA);
+       // Message msg = Message.obtain(null, SAFCacheFacadeConstants.READ_LIVE_DATA);
         msg.replyTo = new Messenger(sensorDataResponseHandler);
         Bundle msgBundle = new Bundle();
         msgBundle.putString("Uri",sensorUri);
@@ -84,10 +72,10 @@ public class SAFCacheFacade {
         }
     }
 
-    public SAFCacheFacade(Messenger messenger) throws IllegalArgumentException {
+    public SAFFacadeOld(Messenger messenger) throws IllegalArgumentException {
         this.messenger = messenger;
 
         if (messenger == null) throw new IllegalArgumentException("messenger should not be null!");
 
-    }
+    }*/
 }
