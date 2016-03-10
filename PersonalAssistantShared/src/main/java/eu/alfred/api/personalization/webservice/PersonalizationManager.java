@@ -81,6 +81,7 @@ public class PersonalizationManager {
                 case PersonalizationConstants.RETRIEVE_REQUESTER_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USER_REQUESTER_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USER_CONTACTS_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_USER_ID_RESPONSE:
                     JSONArray jsonResponse = null;
 
                     try {
@@ -499,6 +500,21 @@ public class PersonalizationManager {
             Bundle data = new Bundle();
             data.putString("id", requesterId);
             msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void retrieveUserID(PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_ID);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
             try {
                 messenger.send(msg);
             } catch (RemoteException e) {

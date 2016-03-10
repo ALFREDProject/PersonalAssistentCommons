@@ -21,6 +21,7 @@ public class PersonalizationConstants {
     public static final int UPDATE_USER_PROFILE = 33345;
     public static final int UPDATE_USER_CONTACT = 33346;
     public static final int RETRIEVE_USER_CONTACTS = 33347;
+    public static final int RETRIEVE_USER_ID = 33348;
 
     public static final int CREATE_REQUESTER_RESPONSE = 34331;
     public static final int CREATE_USER_PROFILE_FILTER_RESPONSE = 34332;
@@ -38,6 +39,7 @@ public class PersonalizationConstants {
     public static final int UPDATE_REQUESTER_RESPONSE = 34344;
     public static final int UPDATE_USER_PROFILE_RESPONSE = 34345;
     public static final int UPDATE_USER_CONTACT_RESPONSE = 34346;
-    public static final int RETRIEVE_USER_CONTACTS_RESPONSE = 33347;
+    public static final int RETRIEVE_USER_CONTACTS_RESPONSE = 34347;
+    public static final int RETRIEVE_USER_ID_RESPONSE = 34348;
 
 }

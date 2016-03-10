@@ -185,6 +185,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
     @Override
     protected void onDestroy(){
         super.onDestroy();
+        personalAssistant.getContext().unbindService(personalAssistant.getServiceConnection());
     }
 
 
