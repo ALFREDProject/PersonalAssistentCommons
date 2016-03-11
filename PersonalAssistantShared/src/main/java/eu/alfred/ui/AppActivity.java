@@ -120,31 +120,31 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
         super.onNewIntent(intent);
         setIntent(intent);
 
-        int methodToCall = intent.getIntExtra("method",0);
+        int methodToCall = intent.getIntExtra("method", 0);
         String command = intent.getStringExtra("command");
         HashMap args = (HashMap) intent.getSerializableExtra("args");
 
         switch (methodToCall) {
             case CadeConstants.IS_ACTION:
-                performAction(command,args);
+                performAction(command, args);
                 break;
             case CadeConstants.IS_WHQUERY:
-                performWhQuery(command,args);
+                performWhQuery(command, args);
                 break;
             case CadeConstants.IS_VALIDITY:
-                performValidity(command,args);
+                performValidity(command, args);
                 break;
             case CadeConstants.IS_ENTITYRECOGNIZER:
-                performEntityRecognizer(command,args);
+                performEntityRecognizer(command, args);
                 break;
         }
     }
 
-    public void ButtonGotPressed(){
+    public void ButtonGotPressed() {
         circleButton.ButtonGotPressed();
 
-        if(cade!=null) {
-            if (circleButton.IsButtonRed()){
+        if (cade != null) {
+            if (circleButton.IsButtonRed()) {
                 cade.StartListening(getPackageName());
             } else {
                 cade.StopListening(getPackageName());
@@ -176,20 +176,20 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         if (circleButton.isActive())
             ButtonGotPressed();
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         personalAssistant.getContext().unbindService(personalAssistant.getServiceConnection());
     }
 
 
-        public class CircleTouchListener implements View.OnTouchListener {
+    public class CircleTouchListener implements View.OnTouchListener {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
