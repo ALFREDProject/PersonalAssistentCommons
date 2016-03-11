@@ -1,11 +1,14 @@
 package eu.alfred.api.market;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
+import eu.alfred.api.market.device.DeviceUuidFactory;
 import eu.alfred.api.market.responses.MarketplaceResponse;
 
 /**
@@ -14,6 +17,7 @@ import eu.alfred.api.market.responses.MarketplaceResponse;
 public class MarketPlace {
 
     private Messenger messenger;
+    private Context context;
 
     private class MarketPlaceDataResponse extends Handler {
         private MarketplaceResponse marketplaceDataResponse;
@@ -77,17 +81,27 @@ public class MarketPlace {
     }
 
 
-    public MarketPlace(Messenger messenger) {
+    public MarketPlace(Messenger messenger, Context context) {
         this.messenger = messenger;
+        this.context = context;
     }
 
 
-    public void login(String user, String password, String deviceId, String versionOS, String platform, MarketplaceResponse response) {
+    public void login(String user, String password, MarketplaceResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, MarketPlaceConstants.LOGIN);
 
             if (response != null)
                 msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
+
+            String deviceId = "unkownDeviceId";
+            try {
+                deviceId = "" + new DeviceUuidFactory(context).getDeviceUuid().toString();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            String versionOS = "" + Build.VERSION.SDK_INT;
+            String platform = "Android";
 
             Bundle data = new Bundle();
             data.putString("p_user", user);
