@@ -34,6 +34,7 @@ public class UserProfile implements Serializable {
 	private String[] interests;
 	private String[] culturalOrFamilyNeeds;
 	private String[] socialMediaProfiles;
+	private MobilityLevel mobilityLevel;
 	private Date lastUpdated;
 	private Date alfedAppInstalationDate;   
 	
@@ -216,7 +217,9 @@ public class UserProfile implements Serializable {
 	public void setAlfedAppInstalationDate(Date alfedAppInstalationDate) {
 		this.alfedAppInstalationDate = alfedAppInstalationDate;
 	}
-	
+	public MobilityLevel getMobilityLevel() { return mobilityLevel; }
+	public void setMobilityLevel(MobilityLevel mobilityLevel) { this.mobilityLevel = mobilityLevel; }
+
 	@Override
 	public String toString() {
 		return "id: " + getId() + ", first-name: " + getFirstName() + ", last-name: " + getLastName() + ", date of birth: " + getDateOfBirth() + "...";
