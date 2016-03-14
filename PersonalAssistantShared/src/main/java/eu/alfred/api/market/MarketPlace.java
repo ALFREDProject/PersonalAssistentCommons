@@ -127,7 +127,11 @@ public class MarketPlace {
                 msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("p_id", id);
+            try {
+                data.putLong("p_id", Long.parseLong(id));
+            } catch (Exception ignored) {
+                data.putLong("p_id", -1);
+            }
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -191,7 +195,13 @@ public class MarketPlace {
                 msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("p_id", id);
+
+            try {
+                data.putLong("p_id", Long.parseLong(id));
+            } catch (Exception var7) {
+                data.putLong("p_id", -1L);
+            }
+
             msg.setData(data);
             try {
                 messenger.send(msg);
