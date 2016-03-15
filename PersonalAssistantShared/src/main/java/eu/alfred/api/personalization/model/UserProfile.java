@@ -1,6 +1,7 @@
 package eu.alfred.api.personalization.model;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 public class UserProfile implements Serializable {
@@ -83,6 +84,20 @@ public class UserProfile implements Serializable {
 	}
 	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+	public int getAgeInYears() {
+		Calendar calendarNow = Calendar.getInstance();
+		calendarNow.setTime(new Date());
+		Calendar calendarBirth = Calendar.getInstance();
+		calendarBirth.setTime(dateOfBirth);
+
+		int diff = calendarNow.get(Calendar.YEAR) - calendarBirth.get(Calendar.YEAR);
+		if (calendarBirth.get(Calendar.MONTH) > calendarNow.get(Calendar.MONTH)
+				|| (calendarBirth.get(Calendar.MONTH) == calendarNow.get(Calendar.MONTH)
+				&& calendarBirth.get(Calendar.DATE) > calendarNow.get(Calendar.DATE))) {
+			diff--;
+		}
+		return diff;
 	}
 	public String getPhone() {
 		return phone;
