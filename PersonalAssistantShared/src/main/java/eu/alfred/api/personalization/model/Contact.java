@@ -34,10 +34,10 @@ public class Contact implements Serializable {
 	public String getId() {
 		return id;
 	}
+	public void setId(String id) { this.id = id; }
 	// For cases we create id for the contact
 	public String setId() {
 		this.id =  "alfred-user-contact-"+UUID.randomUUID().toString(); 
-		
 		return this.id; // When creating a new contact we provide the id back so they assign them to the users
 	}	
 	public String getUserID() {

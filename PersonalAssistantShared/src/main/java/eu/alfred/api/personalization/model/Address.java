@@ -47,6 +47,14 @@ public class Address implements Serializable {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-	
-	
+
+	public boolean isEmpty() {
+		return street == null || "".equals(street) ||
+				number == null || "".equals(street) ||
+				postalCode == null || "".equals(street) ||
+				city == null || "".equals(street) ||
+				state == null || "".equals(street) ||
+				country == null || "".equals(street);
+	}
+
 }

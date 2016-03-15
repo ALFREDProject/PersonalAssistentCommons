@@ -14,6 +14,7 @@ public class Group {
 	private String userID;
 	private Set<String> memberIds;
 	private String name;
+	private String description;
 	private Date creationDate;
 	private Date lastUpdated;
 
@@ -41,6 +42,8 @@ public class Group {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public String getDescription() { return description; }
+	public void setDescription(String description) { this.description = description; }
 	public Date getCreationDate() {
 		return creationDate;
 	}
