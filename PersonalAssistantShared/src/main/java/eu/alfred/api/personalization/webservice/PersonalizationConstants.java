@@ -42,4 +42,5 @@ public class PersonalizationConstants {
     public static final int RETRIEVE_USER_CONTACTS_RESPONSE = 34347;
     public static final int RETRIEVE_USER_ID_RESPONSE = 34348;
 
+    public static final String EXTRAS_JSON = "json";
 }
