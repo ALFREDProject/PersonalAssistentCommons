@@ -15,7 +15,6 @@ import java.util.HashMap;
 
 import eu.alfred.api.PersonalAssistant;
 import eu.alfred.api.PersonalAssistantConnection;
-import eu.alfred.api.event.webservice.EventManager;
 import eu.alfred.api.gamemanager.GameManager;
 import eu.alfred.api.market.MarketPlace;
 import eu.alfred.api.personalization.webservice.PersonalizationManager;
@@ -36,7 +35,6 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
     public Cade cade;
     public GameManager gameManager;
     public MarketPlace marketPlace;
-    public EventManager eventManager;
     public SAFDataFacade safFacade;
     public CloudStorage cloudStorage;
     public PersonalizationManager personalizationManager;
@@ -98,7 +96,6 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
                 cade = new Cade(msg);
                 gameManager = new GameManager(msg);
                 marketPlace = new MarketPlace(msg);
-                eventManager = new EventManager(msg);
                 safFacade = new SAFDataFacade(msg);
                 cloudStorage = new CloudStorage(msg);
                 personalizationManager = new PersonalizationManager(msg);
@@ -170,9 +167,9 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
         endSpeakFilter.addAction(getPackageName() + "." + CadeSpeechStatus.END_OF_SPEECH);
         registerReceiver(endSpeakReceiver, endSpeakFilter);
 
-        IntentFilter eventFilter = new IntentFilter();
-        eventFilter.addAction(getPackageName() + "." + "EVENT");
-        registerReceiver(eventReceiver, eventFilter);
+    //   IntentFilter eventFilter = new IntentFilter();
+    //    eventFilter.addAction(getPackageName() + "." + "EVENT");
+    //    registerReceiver(eventReceiver, eventFilter);
     }
 
     @Override

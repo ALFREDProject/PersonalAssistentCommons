@@ -10,9 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import eu.alfred.api.personalization.model.Contact;
-import eu.alfred.api.personalization.model.Requesters;
-import eu.alfred.api.personalization.model.UserProfile;
 import eu.alfred.api.personalization.responses.PersonalizationResponse;
 
 /**
@@ -100,7 +97,7 @@ public class PersonalizationManager {
         this.messenger = messenger;
     }
 
-    public void createUserProfile(UserProfile newAlfredUser, PersonalizationResponse response) {
+    public void createUserProfile(String newAlfredUser, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.CREATE_USER_PROFILE);
 
@@ -108,7 +105,7 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
 
             Bundle data = new Bundle();
-            data.putSerializable("newAlfredUser", newAlfredUser);
+            data.putString("newAlfredUser", newAlfredUser);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -243,7 +240,7 @@ public class PersonalizationManager {
         }
     }
 
-    public void createUserContact(String userID, Contact newContact, PersonalizationResponse response) {
+    public void createUserContact(String userID, String newContact, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.CREATE_USER_CONTACT);
 
@@ -252,7 +249,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
             data.putString("id", userID);
-            data.putSerializable("newContact", newContact);
+            data.putString("newContact", newContact);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -416,7 +413,7 @@ public class PersonalizationManager {
     }
    */
 
-    public void createRequester(Requesters newServicesRequester, PersonalizationResponse response) {
+    public void createRequester(String newServicesRequester, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.CREATE_REQUESTER);
 
