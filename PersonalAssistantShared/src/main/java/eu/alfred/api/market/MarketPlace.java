@@ -8,8 +8,30 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import eu.alfred.api.market.device.DeviceUuidFactory;
 import eu.alfred.api.market.responses.MarketplaceResponse;
+import eu.alfred.api.market.responses.app_rate.AppRateList;
+import eu.alfred.api.market.responses.apps.AppDetail;
+import eu.alfred.api.market.responses.apps.AppList;
+import eu.alfred.api.market.responses.category.CategoryList;
+import eu.alfred.api.market.responses.country.CountryList;
+import eu.alfred.api.market.responses.language.LanguageList;
+import eu.alfred.api.market.responses.listener.GetAppDetailsResponseListener;
+import eu.alfred.api.market.responses.listener.GetAppListResponseListener;
+import eu.alfred.api.market.responses.listener.GetAppRateListResponseListener;
+import eu.alfred.api.market.responses.listener.GetCategoryListResponseListener;
+import eu.alfred.api.market.responses.listener.GetCountryListResponseListener;
+import eu.alfred.api.market.responses.listener.GetLanguageListResponseListener;
+import eu.alfred.api.market.responses.listener.InstallBinaryResponseListener;
+import eu.alfred.api.market.responses.listener.LoginResponseListener;
+import eu.alfred.api.market.responses.listener.SetAppRateResponseListener;
+import eu.alfred.api.market.responses.listener.SetTokenResponseListener;
+import eu.alfred.api.market.responses.login.User;
+import eu.alfred.api.market.responses.push.SetTokenResponse;
+import eu.alfred.api.market.responses.set_app_rate.SetAppRateResponse;
 
 /**
  * Created by Gary on 03.03.2016.
@@ -64,6 +86,9 @@ public class MarketPlace {
                 case MarketPlaceConstants.SET_TOKEN_RESPONSE:
                     handleResponse(msg, marketplaceDataResponse);
                     break;
+                case MarketPlaceConstants.INSTALL_BINARY_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
             }
         }
     }
@@ -87,12 +112,35 @@ public class MarketPlace {
     }
 
 
-    public void login(String user, String password, MarketplaceResponse response) {
+    public void login(String user, String password, final LoginResponseListener listener) {
         if (messenger != null) {
             Message msg = Message.obtain(null, MarketPlaceConstants.LOGIN);
 
-            if (response != null)
-                msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
+            MarketplaceResponse marketplaceResponse = new MarketplaceResponse() {
+                @Override
+                public void OnSuccess(JSONObject response) {
+                }
+
+                @Override
+                public void OnSuccess(JSONArray response) {
+                }
+
+                @Override
+                public void OnSuccess(String response) {
+                    User item = User.fromJson(response);
+                    if (listener != null) {
+                        listener.onSuccess(item);
+                    }
+                }
+
+                @Override
+                public void OnError(Exception exception) {
+                    if (listener != null) {
+                        listener.onError(exception);
+                    }
+                }
+            };
+            msg.replyTo = new Messenger(new MarketPlaceDataResponse(marketplaceResponse));
 
             String deviceId = "unkownDeviceId";
             try {
@@ -118,13 +166,156 @@ public class MarketPlace {
         }
     }
 
+    public void getCategoryList(final GetCategoryListResponseListener listener) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, MarketPlaceConstants.GET_CATEGORY_LIST);
 
-    public void getAppDetails(String id, MarketplaceResponse response) {
+            MarketplaceResponse marketplaceResponse = new MarketplaceResponse() {
+                @Override
+                public void OnSuccess(JSONObject response) {
+                }
+
+                @Override
+                public void OnSuccess(JSONArray response) {
+                }
+
+                @Override
+                public void OnSuccess(String response) {
+                    CategoryList item = CategoryList.fromJson(response);
+                    if (listener != null) {
+                        listener.onSuccess(item);
+                    }
+                }
+
+                @Override
+                public void OnError(Exception exception) {
+                    if (listener != null) {
+                        listener.onError(exception);
+                    }
+                }
+            };
+            msg.replyTo = new Messenger(new MarketPlaceDataResponse(marketplaceResponse));
+
+            Bundle data = new Bundle();
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void getCountryList(final GetCountryListResponseListener listener) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, MarketPlaceConstants.GET_COUNTRY_LIST);
+
+            MarketplaceResponse marketplaceResponse = new MarketplaceResponse() {
+                @Override
+                public void OnSuccess(JSONObject response) {
+                }
+
+                @Override
+                public void OnSuccess(JSONArray response) {
+                }
+
+                @Override
+                public void OnSuccess(String response) {
+                    CountryList item = CountryList.fromJson(response);
+                    if (listener != null) {
+                        listener.onSuccess(item);
+                    }
+                }
+
+                @Override
+                public void OnError(Exception exception) {
+                    if (listener != null) {
+                        listener.onError(exception);
+                    }
+                }
+            };
+            msg.replyTo = new Messenger(new MarketPlaceDataResponse(marketplaceResponse));
+
+            Bundle data = new Bundle();
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void getLanguageList(final GetLanguageListResponseListener listener) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, MarketPlaceConstants.GET_LANGUAGE_LIST);
+
+            MarketplaceResponse marketplaceResponse = new MarketplaceResponse() {
+                @Override
+                public void OnSuccess(JSONObject response) {
+                }
+
+                @Override
+                public void OnSuccess(JSONArray response) {
+                }
+
+                @Override
+                public void OnSuccess(String response) {
+                    LanguageList item = LanguageList.fromJson(response);
+                    if (listener != null) {
+                        listener.onSuccess(item);
+                    }
+                }
+
+                @Override
+                public void OnError(Exception exception) {
+                    if (listener != null) {
+                        listener.onError(exception);
+                    }
+                }
+            };
+            msg.replyTo = new Messenger(new MarketPlaceDataResponse(marketplaceResponse));
+
+            Bundle data = new Bundle();
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public void getAppDetails(String id, final GetAppDetailsResponseListener listener) {
         if (messenger != null) {
             Message msg = Message.obtain(null, MarketPlaceConstants.GET_APP_DETAIL);
 
-            if (response != null)
-                msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
+            MarketplaceResponse marketplaceResponse = new MarketplaceResponse() {
+                @Override
+                public void OnSuccess(JSONObject response) {
+                }
+
+                @Override
+                public void OnSuccess(JSONArray response) {
+                }
+
+                @Override
+                public void OnSuccess(String response) {
+                    AppDetail item = AppDetail.fromJson(response);
+                    if (listener != null) {
+                        listener.onSuccess(item);
+                    }
+                }
+
+                @Override
+                public void OnError(Exception exception) {
+                    if (listener != null) {
+                        listener.onError(exception);
+                    }
+                }
+            };
+            msg.replyTo = new Messenger(new MarketPlaceDataResponse(marketplaceResponse));
 
             Bundle data = new Bundle();
             try {
@@ -151,12 +342,35 @@ public class MarketPlace {
                            int categoryId,
                            int languageId,
                            boolean hasPromoImage,
-                           MarketplaceResponse response) {
+                           final GetAppListResponseListener listener) {
         if (messenger != null) {
             Message msg = Message.obtain(null, MarketPlaceConstants.GET_APP_LIST);
 
-            if (response != null)
-                msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
+            MarketplaceResponse marketplaceResponse = new MarketplaceResponse() {
+                @Override
+                public void OnSuccess(JSONObject response) {
+                }
+
+                @Override
+                public void OnSuccess(JSONArray response) {
+                }
+
+                @Override
+                public void OnSuccess(String response) {
+                    AppList item = AppList.fromJson(response);
+                    if (listener != null) {
+                        listener.onSuccess(item);
+                    }
+                }
+
+                @Override
+                public void OnError(Exception exception) {
+                    if (listener != null) {
+                        listener.onError(exception);
+                    }
+                }
+            };
+            msg.replyTo = new Messenger(new MarketPlaceDataResponse(marketplaceResponse));
 
             Bundle data = new Bundle();
             /*
@@ -187,12 +401,35 @@ public class MarketPlace {
         }
     }
 
-    public void getAppRateList(String id, MarketplaceResponse response) {
+    public void getAppRateList(String id, final GetAppRateListResponseListener listener) {
         if (messenger != null) {
             Message msg = Message.obtain(null, MarketPlaceConstants.GET_APP_RATE_LIST);
 
-            if (response != null)
-                msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
+            MarketplaceResponse marketplaceResponse = new MarketplaceResponse() {
+                @Override
+                public void OnSuccess(JSONObject response) {
+                }
+
+                @Override
+                public void OnSuccess(JSONArray response) {
+                }
+
+                @Override
+                public void OnSuccess(String response) {
+                    AppRateList item = AppRateList.fromJson(response);
+                    if (listener != null) {
+                        listener.onSuccess(item);
+                    }
+                }
+
+                @Override
+                public void OnError(Exception exception) {
+                    if (listener != null) {
+                        listener.onError(exception);
+                    }
+                }
+            };
+            msg.replyTo = new Messenger(new MarketPlaceDataResponse(marketplaceResponse));
 
             Bundle data = new Bundle();
 
@@ -211,86 +448,41 @@ public class MarketPlace {
         }
     }
 
-    public void getCategoryList(MarketplaceResponse response) {
-        if (messenger != null) {
-            Message msg = Message.obtain(null, MarketPlaceConstants.GET_CATEGORY_LIST);
-
-            if (response != null)
-                msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
-
-            Bundle data = new Bundle();
-            msg.setData(data);
-            try {
-                messenger.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void getCountryList(MarketplaceResponse response) {
-        if (messenger != null) {
-            Message msg = Message.obtain(null, MarketPlaceConstants.GET_COUNTRY_LIST);
-
-            if (response != null)
-                msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
-
-            Bundle data = new Bundle();
-            msg.setData(data);
-            try {
-                messenger.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void getLanguageList(MarketplaceResponse response) {
-        if (messenger != null) {
-            Message msg = Message.obtain(null, MarketPlaceConstants.GET_LANGUAGE_LIST);
-
-            if (response != null)
-                msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
-
-            Bundle data = new Bundle();
-            msg.setData(data);
-            try {
-                messenger.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void autoLogin(MarketplaceResponse response) {
-        if (messenger != null) {
-            Message msg = Message.obtain(null, MarketPlaceConstants.AUTO_LOGIN);
-
-            if (response != null)
-                msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
-
-            Bundle data = new Bundle();
-            msg.setData(data);
-            try {
-                messenger.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void setAppRate(Integer id,
                            String title,
                            int rate,
                            int author,
                            String body,
                            int versionNumber,
-                           MarketplaceResponse response) {
+                           final SetAppRateResponseListener listener) {
         if (messenger != null) {
             Message msg = Message.obtain(null, MarketPlaceConstants.SET_APP_RATE);
 
-            if (response != null)
-                msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
+            MarketplaceResponse marketplaceResponse = new MarketplaceResponse() {
+                @Override
+                public void OnSuccess(JSONObject response) {
+                }
+
+                @Override
+                public void OnSuccess(JSONArray response) {
+                }
+
+                @Override
+                public void OnSuccess(String response) {
+                    SetAppRateResponse item = SetAppRateResponse.fromJson(response);
+                    if (listener != null) {
+                        listener.onSuccess(item);
+                    }
+                }
+
+                @Override
+                public void OnError(Exception exception) {
+                    if (listener != null) {
+                        listener.onError(exception);
+                    }
+                }
+            };
+            msg.replyTo = new Messenger(new MarketPlaceDataResponse(marketplaceResponse));
 
             Bundle data = new Bundle();
             data.putInt("p_id", id);
@@ -308,15 +500,38 @@ public class MarketPlace {
         }
     }
 
-    public void setInstalledApps(String jsonArray, MarketplaceResponse response) {
+    public void setToken(String token, final SetTokenResponseListener listener) {
         if (messenger != null) {
-            Message msg = Message.obtain(null, MarketPlaceConstants.SET_INSTALLED_APPS);
+            Message msg = Message.obtain(null, MarketPlaceConstants.SET_TOKEN);
 
-            if (response != null)
-                msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
+            MarketplaceResponse marketplaceResponse = new MarketplaceResponse() {
+                @Override
+                public void OnSuccess(JSONObject response) {
+                }
+
+                @Override
+                public void OnSuccess(JSONArray response) {
+                }
+
+                @Override
+                public void OnSuccess(String response) {
+                    SetTokenResponse item = SetTokenResponse.fromJson(response);
+                    if (listener != null) {
+                        listener.onSuccess(item);
+                    }
+                }
+
+                @Override
+                public void OnError(Exception exception) {
+                    if (listener != null) {
+                        listener.onError(exception);
+                    }
+                }
+            };
+            msg.replyTo = new Messenger(new MarketPlaceDataResponse(marketplaceResponse));
 
             Bundle data = new Bundle();
-            data.putString("p_jsonArray", jsonArray);
+            data.putString("p_token", token);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -326,15 +541,38 @@ public class MarketPlace {
         }
     }
 
-    public void setToken(String token, MarketplaceResponse response) {
+    public void installBinary(long appId, String versionId, final InstallBinaryResponseListener listener) {
         if (messenger != null) {
             Message msg = Message.obtain(null, MarketPlaceConstants.SET_TOKEN);
 
-            if (response != null)
-                msg.replyTo = new Messenger(new MarketPlaceDataResponse(response));
+            MarketplaceResponse marketplaceResponse = new MarketplaceResponse() {
+                @Override
+                public void OnSuccess(JSONObject response) {
+                }
+
+                @Override
+                public void OnSuccess(JSONArray response) {
+                }
+
+                @Override
+                public void OnSuccess(String binaryString) {
+                    if (listener != null) {
+                        listener.onSuccess();
+                    }
+                }
+
+                @Override
+                public void OnError(Exception exception) {
+                    if (listener != null) {
+                        listener.onError(exception);
+                    }
+                }
+            };
+            msg.replyTo = new Messenger(new MarketPlaceDataResponse(marketplaceResponse));
 
             Bundle data = new Bundle();
-            data.putString("p_token", token);
+            data.putLong("p_appId", appId);
+            data.putString("p_versionId", versionId);
             msg.setData(data);
             try {
                 messenger.send(msg);

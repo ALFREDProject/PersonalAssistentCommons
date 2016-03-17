@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$/PersonalAssistantShared/src/main/java/eu/alfred/api/market/device/Connection.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/PersonalAssistantShared/src/main/java/eu/alfred/api/market/device/Device.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/PersonalAssistantShared/src/main/java/eu/alfred/api/market/device/DeviceUuidFactory.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/PersonalAssistantShared/src/main/res/raw" charset="windows-1252" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
