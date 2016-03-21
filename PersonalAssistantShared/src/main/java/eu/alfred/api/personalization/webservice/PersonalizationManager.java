@@ -40,6 +40,14 @@ public class PersonalizationManager {
                 case PersonalizationConstants.CREATE_REQUESTER_RESPONSE:
                 case PersonalizationConstants.UPDATE_REQUESTER_RESPONSE:
                 case PersonalizationConstants.DELETE_REQUESTER_RESPONSE:
+                case PersonalizationConstants.ADD_MEMBER_TO_GROUP_RESPONSE:
+                case PersonalizationConstants.CREATE_GROUP_RESPONSE:
+                case PersonalizationConstants.DELETE_GROUP_RESPONSE:
+                case PersonalizationConstants.DELETE_USER_HEALTH_PROFILE_RESPONSE:
+                case PersonalizationConstants.UPDATE_GROUP_RESPONSE:
+                case PersonalizationConstants.UPDATE_USER_HEALTH_PROFILE_RESPONSE:
+                case PersonalizationConstants.CREATE_USER_HEALTH_PROFILE_RESPONSE:
+
 
                     JSONObject jsonResponse = null;
 
@@ -79,6 +87,18 @@ public class PersonalizationManager {
                 case PersonalizationConstants.RETRIEVE_USER_REQUESTER_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USER_CONTACTS_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USER_ID_RESPONSE:
+                case PersonalizationConstants.GET_UNSYNCHRONIZED_USER_PROFILES_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_ALL_USER_CONTACTS_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_GROUP_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_GROUPS_WITH_MEMBER_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_FILTERED_GROUPS_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_USER_CONTACT_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_USER_HEALTH_PROFILE_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_USER_PROFILE_SENSORED_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_USER_PROFILES_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_USERS_GROUPS_RESPONSE:
+                case PersonalizationConstants.UPDATE_GROUP_RESPONSE:
+
                     JSONArray jsonResponse = null;
 
                     try {
@@ -154,7 +174,7 @@ public class PersonalizationManager {
 
     public void retrieveUserProfilesFilter(String userID, PersonalizationResponse response) {
         if (messenger != null) {
-            Message msg = Message.obtain(null, PersonalizationConstants.CREATE_USER_PROFILE_FILTER);
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILE_FILTER);
 
             if (response != null)
                 msg.replyTo = new Messenger(new PersonalizationDataResponse(response));

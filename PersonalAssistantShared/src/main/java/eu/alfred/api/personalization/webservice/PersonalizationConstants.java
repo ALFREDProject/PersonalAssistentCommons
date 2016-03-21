@@ -22,6 +22,7 @@ public class PersonalizationConstants {
     public static final int UPDATE_USER_CONTACT = 33346;
     public static final int RETRIEVE_USER_CONTACTS = 33347;
     public static final int RETRIEVE_USER_ID = 33348;
+    public static final int RETRIEVE_USER_PROFILE_FILTER = 33349;
 
     public static final int CREATE_REQUESTER_RESPONSE = 34331;
     public static final int CREATE_USER_PROFILE_FILTER_RESPONSE = 34332;
@@ -41,6 +42,23 @@ public class PersonalizationConstants {
     public static final int UPDATE_USER_CONTACT_RESPONSE = 34346;
     public static final int RETRIEVE_USER_CONTACTS_RESPONSE = 34347;
     public static final int RETRIEVE_USER_ID_RESPONSE = 34348;
+    public static final int ADD_MEMBER_TO_GROUP_RESPONSE = 33349;
+    public static final int CREATE_GROUP_RESPONSE = 33350;
+    public static final int DELETE_GROUP_RESPONSE = 33351;
+    public static final int DELETE_USER_HEALTH_PROFILE_RESPONSE = 33352;
+    public static final int GET_UNSYNCHRONIZED_USER_PROFILES_RESPONSE = 33353;
+    public static final int RETRIEVE_ALL_USER_CONTACTS_RESPONSE = 33354;
+    public static final int RETRIEVE_GROUP_RESPONSE = 33355;
+    public static final int RETRIEVE_GROUPS_WITH_MEMBER_RESPONSE = 33356;
+    public static final int RETRIEVE_FILTERED_GROUPS_RESPONSE = 33357;
+    public static final int RETRIEVE_USER_CONTACT_RESPONSE = 33358;
+    public static final int RETRIEVE_USER_HEALTH_PROFILE_RESPONSE = 33359;
+    public static final int RETRIEVE_USER_PROFILE_SENSORED_RESPONSE = 33360;
+    public static final int RETRIEVE_USER_PROFILES_RESPONSE = 33361;
+    public static final int RETRIEVE_USERS_GROUPS_RESPONSE = 33362;
+    public static final int UPDATE_GROUP_RESPONSE = 33363;
+    public static final int UPDATE_USER_HEALTH_PROFILE_RESPONSE = 33364;
+    public static final int CREATE_USER_HEALTH_PROFILE_RESPONSE = 33365;
 
     public static final String EXTRAS_JSON = "json";
 }
