@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import eu.alfred.api.personalization.model.UserProfile;
 import eu.alfred.api.personalization.responses.PersonalizationResponse;
 
 /**
@@ -47,6 +48,7 @@ public class PersonalizationManager {
                 case PersonalizationConstants.UPDATE_GROUP_RESPONSE:
                 case PersonalizationConstants.UPDATE_USER_HEALTH_PROFILE_RESPONSE:
                 case PersonalizationConstants.CREATE_USER_HEALTH_PROFILE_RESPONSE:
+                case PersonalizationConstants.REMOVE_MEMBER_FROM_GROUP_RESPONSE:
 
 
                     JSONObject jsonResponse = null;
@@ -115,6 +117,10 @@ public class PersonalizationManager {
 
     public PersonalizationManager(Messenger messenger) {
         this.messenger = messenger;
+    }
+
+    public void createUserProfile(UserProfile newAlfredUser, PersonalizationResponse response) {
+        // TODO: serialize newAlfredUser to String and call createUserProfile with that
     }
 
     public void createUserProfile(String newAlfredUser, PersonalizationResponse response) {

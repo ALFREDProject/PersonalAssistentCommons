@@ -59,6 +59,7 @@ public class PersonalizationConstants {
     public static final int UPDATE_GROUP_RESPONSE = 33363;
     public static final int UPDATE_USER_HEALTH_PROFILE_RESPONSE = 33364;
     public static final int CREATE_USER_HEALTH_PROFILE_RESPONSE = 33365;
+    public static final int REMOVE_MEMBER_FROM_GROUP_RESPONSE = 33366;
 
     public static final String EXTRAS_JSON = "json";
 }
