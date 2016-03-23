@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -35,7 +36,7 @@ public class CircleButton extends ImageView {
     private float animationProgress;
 
     private int pressedRingWidth;
-    private int defaultColor = R.color.AlfredPastelBlue;
+    private int defaultColor;
     private int pressedColor;
     private ObjectAnimator pressedAnimator;
 
@@ -45,7 +46,6 @@ public class CircleButton extends ImageView {
     private boolean isAnimationRunning;
 
     private boolean isActive;
-
     private boolean isAppButton = false;
 
     private TransitionDrawable transition;
@@ -183,6 +183,7 @@ public class CircleButton extends ImageView {
     }
 
     public void setColor(int color) {
+
         this.defaultColor = color;
         this.pressedColor = getHighlightColor(color, PRESSED_COLOR_LIGHTUP);
 
@@ -215,18 +216,30 @@ public class CircleButton extends ImageView {
         this.setScaleType(ScaleType.CENTER_INSIDE);
         setClickable(true);
 
-        Integer colorFrom = context.getResources().getColor(R.color.AlfredPastelBlue);
-        Integer colorTo = context.getResources().getColor(R.color.MicrophoneRed);
+        SharedPreferences prefs = context.getSharedPreferences("COLOR_PREF", Context.MODE_PRIVATE);
 
-        colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        String colorName = prefs.getString("colorName", "AlfredPastelBlue");
 
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                setColor((Integer)animator.getAnimatedValue());
-            }
+        switch (colorName) {
+            case("AlfredPastelBlue"):
+                defaultColor = R.color.AlfredPastelBlue;
+                Log.i("COLORTEST", "ss");
+                break;
+            case("holo_green_dark"):
+                defaultColor = android.R.color.holo_green_dark;
+                break;
+            case("holo_red_dark"):
+                defaultColor = android.R.color.holo_red_dark;
+                break;
+            case("holo_orange_dark"):
+                defaultColor = android.R.color.holo_orange_dark;
+                break;
+            case("black"):
+                defaultColor = android.R.color.black;
+                break;
+        }
 
-        });
+        createColorAnimation(context);
 
         setIsActive(false);
         circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -238,21 +251,58 @@ public class CircleButton extends ImageView {
         pressedRingWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_PRESSED_RING_WIDTH_DIP, getResources()
                 .getDisplayMetrics());
 
-        int color = R.color.AlfredPastelBlue;
         if (attrs != null) {
             final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircleButton);
-            color = a.getColor(R.styleable.CircleButton_cb_color, context.getResources().getColor(color));
             pressedRingWidth = (int) a.getDimension(R.styleable.CircleButton_cb_pressedRingWidth, pressedRingWidth);
             isAppButton = (boolean) a.getBoolean(R.styleable.CircleButton_cb_isApp, isAppButton);
             a.recycle();
         }
 
-        setColor(color);
+        setColor(defaultColor);
         isRed = false;
         colorAnimation.reverse();
         focusPaint.setStrokeWidth(pressedRingWidth);
         pressedAnimator = ObjectAnimator.ofFloat(this, "animationProgress", 0f, 0f);
         pressedAnimator.setDuration(ANIMATION_TIME_ID);
+    }
+
+    public void createColorAnimation(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("COLOR_PREF", Context.MODE_PRIVATE);
+
+        String colorName = prefs.getString("colorName", "AlfredPastelBlue");
+
+        switch (colorName) {
+            case("AlfredPastelBlue"):
+                defaultColor = R.color.AlfredPastelBlue;
+                Log.i("COLORTEST", "ss");
+                break;
+            case("holo_green_dark"):
+                defaultColor = android.R.color.holo_green_dark;
+                break;
+            case("holo_red_dark"):
+                defaultColor = android.R.color.holo_red_dark;
+                break;
+            case("holo_orange_dark"):
+                defaultColor = android.R.color.holo_orange_dark;
+                break;
+            case("black"):
+                defaultColor = android.R.color.black;
+                break;
+        }
+
+        Integer colorFrom = context.getResources().getColor(defaultColor);
+        Integer colorTo = context.getResources().getColor(R.color.MicrophoneRed);
+
+        if (colorAnimation!=null) colorAnimation.removeAllUpdateListeners();
+        colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                setColor((Integer) animator.getAnimatedValue());
+            }
+
+        });
     }
 
     private int getHighlightColor(int color, int amount) {
@@ -283,6 +333,12 @@ public class CircleButton extends ImageView {
     public void StopRecording(boolean isClicked) {
         if (!isClicked)
             setPressed(false);
+    }
+
+    public void setDefaultColor(String colorName, Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences("COLOR_PREF", Context.MODE_PRIVATE).edit();
+        editor.putString("colorName", colorName);
+        editor.commit();
     }
 
     public boolean isActive() {
