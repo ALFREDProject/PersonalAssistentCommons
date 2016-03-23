@@ -3,7 +3,7 @@ package eu.alfred.api.personalization.model;
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class Requesters implements Serializable {
+public class Requester implements Serializable {
 
   private String id;
   private String requesterAlfredId;

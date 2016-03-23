@@ -3,6 +3,7 @@ package eu.alfred.api.personalization.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class Contact implements Serializable {
@@ -25,7 +26,7 @@ public class Contact implements Serializable {
 	private Relation[] relationToUser;
 	private AccessLevels accessLevels;
 	private String[] socialMediaProfiles;
-	private HashMap<String,Boolean> accessRightsToAttributes;
+	private Map<String,Boolean> accessRightsToAttributes;
 
 	public Contact() {
 		setId();
@@ -133,12 +134,12 @@ public class Contact implements Serializable {
 		this.accessLevels = accessLevels;
 	}
 
-	public HashMap<String, Boolean> getAccessRightsToAttributes() {
+	public Map<String, Boolean> getAccessRightsToAttributes() {
 		return accessRightsToAttributes;
 	}
 
 	public void setAccessRightsToAttributes(
-			HashMap<String, Boolean> accessRightsToAttributes) {
+			Map<String, Boolean> accessRightsToAttributes) {
 		this.accessRightsToAttributes = accessRightsToAttributes;
 	}
 
