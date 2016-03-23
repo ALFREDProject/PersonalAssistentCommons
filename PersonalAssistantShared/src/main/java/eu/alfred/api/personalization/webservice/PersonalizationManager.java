@@ -101,6 +101,7 @@ public class PersonalizationManager {
                 case PersonalizationConstants.RETRIEVE_USER_PROFILES_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USERS_GROUPS_RESPONSE:
                 case PersonalizationConstants.UPDATE_GROUP_RESPONSE:
+                case PersonalizationConstants.RETRIEVE_ALL_GROUPS_RESPONSE:
 
                     JSONArray jsonResponse = null;
 
