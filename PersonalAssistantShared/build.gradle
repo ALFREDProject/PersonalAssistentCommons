@@ -26,7 +26,7 @@ dependencies {
     compile 'org.springframework:spring-beans:3.0.5.RELEASE'
     compile 'org.springframework.data:spring-data-mongodb:1.8.2.RELEASE'
     compile 'com.fasterxml.jackson.core:jackson-core:2.7.0'
-    compile 'com.google.code.gson:gson:1.7.2'
+    compile 'com.google.code.gson:gson:2.2.4'
 }
 
 

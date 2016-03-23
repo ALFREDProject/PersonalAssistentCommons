@@ -6,16 +6,17 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import eu.alfred.api.personalization.model.UserProfile;
+import eu.alfred.api.personalization.model.*;
 import eu.alfred.api.personalization.responses.PersonalizationResponse;
+import eu.alfred.api.personalization.client.*;
 
-/**
- * Created by Tobias on 27/01/2016.
- */
+
 public class PersonalizationManager {
 
     private Messenger messenger;
@@ -119,11 +120,9 @@ public class PersonalizationManager {
         this.messenger = messenger;
     }
 
-    public void createUserProfile(UserProfile newAlfredUser, PersonalizationResponse response) {
-        // TODO: serialize newAlfredUser to String and call createUserProfile with that
-    }
 
-    public void createUserProfile(String newAlfredUser, PersonalizationResponse response) {
+	// Creates a new User Profile that will be persisted in the database
+    public void createUserProfile(UserProfile newAlfredUser, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.CREATE_USER_PROFILE);
 
@@ -131,7 +130,11 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("newAlfredUser", newAlfredUser);
+
+            Gson gson = new Gson();
+			UserProfileDto newAlfredUserDto = UserProfileMapper.toDto(newAlfredUser);
+			String newAlfredUserJson = gson.toJson(newAlfredUserDto);
+			data.putString("newAlfredUser", newAlfredUserJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -141,6 +144,7 @@ public class PersonalizationManager {
         }
     }
 
+	// Retrieves the User Profile with the specified Id persisted in the database
     public void retrieveUserProfile(String userID, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILE);
@@ -149,7 +153,11 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("id", userID);
+
+            Gson gson = new Gson();
+			StringDto userIDDto = StringMapper.toDto(userID);
+			String userIDJson = gson.toJson(userIDDto);
+			data.putString("userID", userIDJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -159,16 +167,20 @@ public class PersonalizationManager {
         }
     }
 
-    public void retrieveUserProfileSensored(String userID, String searchUsersCriteria, PersonalizationResponse response) {
+	// Retrieves the User Profile with the specified Id in behalf of a specified requester
+    public void retrieveUserProfileSensored(String searchUsersCriteria, PersonalizationResponse response) {
         if (messenger != null) {
-            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILES_BY_CRITERIA);
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILE_SENSORED);
 
             if (response != null)
                 msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("id", userID);
-            data.putString("searchUsersCriteria", searchUsersCriteria);
+
+            Gson gson = new Gson();
+			StringDto searchUsersCriteriaDto = StringMapper.toDto(searchUsersCriteria);
+			String searchUsersCriteriaJson = gson.toJson(searchUsersCriteriaDto);
+			data.putString("searchUsersCriteria", searchUsersCriteriaJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -178,15 +190,20 @@ public class PersonalizationManager {
         }
     }
 
-    public void retrieveUserProfilesFilter(String userID, PersonalizationResponse response) {
+	// Retrieves all User Profiles which match specified criteria
+    public void retrieveUserProfiles(String searchUsersCriteria, PersonalizationResponse response) {
         if (messenger != null) {
-            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILE_FILTER);
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILES);
 
             if (response != null)
                 msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("id", userID);
+
+            Gson gson = new Gson();
+			StringDto searchUsersCriteriaDto = StringMapper.toDto(searchUsersCriteria);
+			String searchUsersCriteriaJson = gson.toJson(searchUsersCriteriaDto);
+			data.putString("searchUsersCriteria", searchUsersCriteriaJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -196,6 +213,7 @@ public class PersonalizationManager {
         }
     }
 
+	// Updates the User Profile with the specified Id for the provided values
     public void updateUserProfile(String userID, String valuesToUpdate, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_USER_PROFILE);
@@ -204,8 +222,14 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("id", userID);
-            data.putString("valuesToUpdate", valuesToUpdate);
+
+            Gson gson = new Gson();
+			StringDto userIDDto = StringMapper.toDto(userID);
+			String userIDJson = gson.toJson(userIDDto);
+			data.putString("userID", userIDJson);
+			StringDto valuesToUpdateDto = StringMapper.toDto(valuesToUpdate);
+			String valuesToUpdateJson = gson.toJson(valuesToUpdateDto);
+			data.putString("valuesToUpdate", valuesToUpdateJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -215,6 +239,7 @@ public class PersonalizationManager {
         }
     }
 
+	// Deletes the User Profile with the specified Id from the repository
     public void deleteUserProfile(String userID, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.DELETE_USER_PROFILE);
@@ -223,7 +248,11 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("id", userID);
+
+            Gson gson = new Gson();
+			StringDto userIDDto = StringMapper.toDto(userID);
+			String userIDJson = gson.toJson(userIDDto);
+			data.putString("userID", userIDJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -233,30 +262,20 @@ public class PersonalizationManager {
         }
     }
 
-    /*public Boolean checkUsernameAvailability(String username) {
-        if (messenger != null) {
-            Message msg = Message.obtain(null, S);
-            Bundle data = new Bundle();
-            data.putString("username", username);
-            msg.setData(data);
-            try {
-                messenger.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }*/
-
+	// Returns all User Profiles that were updated or created after the specified sync date
     public void getUnsynchronizedUserProfiles(String lastSyncDate, PersonalizationResponse response) {
         if (messenger != null) {
-            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILES_LAST_SYNC);
+            Message msg = Message.obtain(null, PersonalizationConstants.GET_UNSYNCHRONIZED_USER_PROFILES);
 
             if (response != null)
                 msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("lastSyncDate", lastSyncDate);
+
+            Gson gson = new Gson();
+			StringDto lastSyncDateDto = StringMapper.toDto(lastSyncDate);
+			String lastSyncDateJson = gson.toJson(lastSyncDateDto);
+			data.putString("lastSyncDate", lastSyncDateJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -266,7 +285,8 @@ public class PersonalizationManager {
         }
     }
 
-    public void createUserContact(String userID, String newContact, PersonalizationResponse response) {
+	// Creates a new User Contact associated with an ALFRED user
+    public void createUserContact(String userID, Contact newContact, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.CREATE_USER_CONTACT);
 
@@ -274,8 +294,14 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("id", userID);
-            data.putString("newContact", newContact);
+
+            Gson gson = new Gson();
+			StringDto userIDDto = StringMapper.toDto(userID);
+			String userIDJson = gson.toJson(userIDDto);
+			data.putString("userID", userIDJson);
+			ContactDto newContactDto = ContactMapper.toDto(newContact);
+			String newContactJson = gson.toJson(newContactDto);
+			data.putString("newContact", newContactJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -285,7 +311,31 @@ public class PersonalizationManager {
         }
     }
 
+	// Retrieves all Contacts of a specified ALFRED user
     public void retrieveAllUserContacts(String userID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_ALL_USER_CONTACTS);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto userIDDto = StringMapper.toDto(userID);
+			String userIDJson = gson.toJson(userIDDto);
+			data.putString("userID", userIDJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Retrieves all Contacts of a specified ALFRED user which match specified criteria
+    public void retrieveUserContacts(String userID, String searchContactsCriteria, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_CONTACTS);
 
@@ -293,7 +343,14 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("id", userID);
+
+            Gson gson = new Gson();
+			StringDto userIDDto = StringMapper.toDto(userID);
+			String userIDJson = gson.toJson(userIDDto);
+			data.putString("userID", userIDJson);
+			StringDto searchContactsCriteriaDto = StringMapper.toDto(searchContactsCriteria);
+			String searchContactsCriteriaJson = gson.toJson(searchContactsCriteriaDto);
+			data.putString("searchContactsCriteria", searchContactsCriteriaJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -303,25 +360,7 @@ public class PersonalizationManager {
         }
     }
 
-    public void retrieveUserContacts(String userID, String searchContactsCriteria, PersonalizationResponse response) {
-        if (messenger != null) {
-            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_CONTACTS_BY_CRITERIA);
-
-            if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
-
-            Bundle data = new Bundle();
-            data.putString("id", userID);
-            data.putString("searchContactsCriteria", searchContactsCriteria);
-            msg.setData(data);
-            try {
-                messenger.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
+	// Updates the specified Contact of the specified ALFRED user with the specified Id for the provided values
     public void updateUserContact(String contactID, String valuesToUpdate, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_USER_CONTACT);
@@ -330,8 +369,14 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("id", contactID);
-            data.putString("searchContactsCriteria", valuesToUpdate);
+
+            Gson gson = new Gson();
+			StringDto contactIDDto = StringMapper.toDto(contactID);
+			String contactIDJson = gson.toJson(contactIDDto);
+			data.putString("contactID", contactIDJson);
+			StringDto valuesToUpdateDto = StringMapper.toDto(valuesToUpdate);
+			String valuesToUpdateJson = gson.toJson(valuesToUpdateDto);
+			data.putString("valuesToUpdate", valuesToUpdateJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -341,6 +386,30 @@ public class PersonalizationManager {
         }
     }
 
+	// Retrieves the specified Contact with the specified Id
+    public void retrieveUserContact(String contactID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_CONTACT);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto contactIDDto = StringMapper.toDto(contactID);
+			String contactIDJson = gson.toJson(contactIDDto);
+			data.putString("contactID", contactIDJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Deleted the Contact with the specified Id from the repository
     public void deleteUserContact(String contactID, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.DELETE_USER_CONTACT);
@@ -349,7 +418,11 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("id", contactID);
+
+            Gson gson = new Gson();
+			StringDto contactIDDto = StringMapper.toDto(contactID);
+			String contactIDJson = gson.toJson(contactIDDto);
+			data.putString("contactID", contactIDJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -359,87 +432,8 @@ public class PersonalizationManager {
         }
     }
 
-    /*
-    public Response createUserHistoricalEntry(String userID, HistoricalEntry newHistoricalEntry) {
-        if (messenger != null) {
-            Message msg = Message.obtain(null, CadeConstants.START_LISTENING);
-            Bundle data = new Bundle();
-            data.putString("id", userID);
-            data.putSerializable("newHistoricalEntry",newHistoricalEntry);
-            msg.setData(data);
-            try {
-                messenger.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    public List<HistoricalEntry> retrieveAllUserHistoricalEntries(@PathParam("id") String userID) {
-        if (messenger != null) {
-            Message msg = Message.obtain(null, CadeConstants.START_LISTENING);
-            Bundle data = new Bundle();
-            data.putString("id", userID);
-            msg.setData(data);
-            try {
-                messenger.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    public List<HistoricalEntry> retrieveUserHistoricalEntries(@PathParam("id") String userID, String searchHistoricalEntriesCriteria) {
-        if (messenger != null) {
-            Message msg = Message.obtain(null, CadeConstants.START_LISTENING);
-            Bundle data = new Bundle();
-            data.putString("id", userID);
-            data.putString("searchHistoricalEntriesCriteria",searchHistoricalEntriesCriteria);
-            msg.setData(data);
-            try {
-                messenger.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    public Response updateUserHistoricalEntries(@PathParam("id") String historicalEntryID, String valuesToUpdate) {
-        if (messenger != null) {
-            Message msg = Message.obtain(null, CadeConstants.START_LISTENING);
-            Bundle data = new Bundle();
-            data.putString("id", historicalEntryID);
-            data.putString("valuesToUpdate",valuesToUpdate);
-            msg.setData(data);
-            try {
-                messenger.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    public Response deleteUserHistoricalEntries(@PathParam("id") String historicalEntryID) {
-        if (messenger != null) {
-            Message msg = Message.obtain(null, CadeConstants.START_LISTENING);
-            Bundle data = new Bundle();
-            data.putString("id", historicalEntryID);
-            msg.setData(data);
-            try {
-                messenger.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-   */
-
-    public void createRequester(String newServicesRequester, PersonalizationResponse response) {
+	// Creates a new Requester object which defines the Id of an ALFRED user and all the information of their profile that are allowing access to another ALFRED user (their Id also specified)
+    public void createRequester(Requester newServicesRequester, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.CREATE_REQUESTER);
 
@@ -447,7 +441,11 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
 
             Bundle data = new Bundle();
-            data.putSerializable("newServicesRequester", newServicesRequester);
+
+            Gson gson = new Gson();
+			RequesterDto newServicesRequesterDto = RequesterMapper.toDto(newServicesRequester);
+			String newServicesRequesterJson = gson.toJson(newServicesRequesterDto);
+			data.putString("newServicesRequester", newServicesRequesterJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -457,6 +455,7 @@ public class PersonalizationManager {
         }
     }
 
+	// Creates a new Requester object which defines the Id of an ALFRED user and all the information of their profile that are allowing access to another ALFRED user (their Id also specified)
     public void retrieveRequester(String requesterId, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_REQUESTER);
@@ -465,7 +464,11 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("id", requesterId);
+
+            Gson gson = new Gson();
+			StringDto requesterIdDto = StringMapper.toDto(requesterId);
+			String requesterIdJson = gson.toJson(requesterIdDto);
+			data.putString("requesterId", requesterIdJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -475,16 +478,23 @@ public class PersonalizationManager {
         }
     }
 
-    public void retrieveRequesterByTarget(String requesterAlfredId, String targetAlfredId, PersonalizationResponse response) {
+	// Retrieves the Requester with the specified Id persisted in the database
+    public void retrieveRequester(String requesterAlfredId, String targetAlfredId, PersonalizationResponse response) {
         if (messenger != null) {
-            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_REQUESTER);
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_REQUESTER);
 
             if (response != null)
                 msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("requesterAlfredId", requesterAlfredId);
-            data.putString("targetAlfredId", targetAlfredId);
+
+            Gson gson = new Gson();
+			StringDto requesterAlfredIdDto = StringMapper.toDto(requesterAlfredId);
+			String requesterAlfredIdJson = gson.toJson(requesterAlfredIdDto);
+			data.putString("requesterAlfredId", requesterAlfredIdJson);
+			StringDto targetAlfredIdDto = StringMapper.toDto(targetAlfredId);
+			String targetAlfredIdJson = gson.toJson(targetAlfredIdDto);
+			data.putString("targetAlfredId", targetAlfredIdJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -494,6 +504,7 @@ public class PersonalizationManager {
         }
     }
 
+	// Updates the Requester with the specified Id for the provided values
     public void updateRequester(String requesterId, String valuesToUpdate, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_REQUESTER);
@@ -502,8 +513,14 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("id", requesterId);
-            data.putString("valuesToUpdate", valuesToUpdate);
+
+            Gson gson = new Gson();
+			StringDto requesterIdDto = StringMapper.toDto(requesterId);
+			String requesterIdJson = gson.toJson(requesterIdDto);
+			data.putString("requesterId", requesterIdJson);
+			StringDto valuesToUpdateDto = StringMapper.toDto(valuesToUpdate);
+			String valuesToUpdateJson = gson.toJson(valuesToUpdateDto);
+			data.putString("valuesToUpdate", valuesToUpdateJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -513,6 +530,7 @@ public class PersonalizationManager {
         }
     }
 
+	// Deletes the Requester with the specified Id from the repository
     public void deleteRequester(String requesterId, PersonalizationResponse response) {
         if (messenger != null) {
             Message msg = Message.obtain(null, PersonalizationConstants.DELETE_REQUESTER);
@@ -521,7 +539,11 @@ public class PersonalizationManager {
                 msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
 
             Bundle data = new Bundle();
-            data.putString("id", requesterId);
+
+            Gson gson = new Gson();
+			StringDto requesterIdDto = StringMapper.toDto(requesterId);
+			String requesterIdJson = gson.toJson(requesterIdDto);
+			data.putString("requesterId", requesterIdJson);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -531,13 +553,330 @@ public class PersonalizationManager {
         }
     }
 
-    public void retrieveUserID(PersonalizationResponse response) {
+	// Creates a HealthProfile for a specified ALFRED user
+    public void createUserHealthProfile(String userID, HealthProfile profile, PersonalizationResponse response) {
         if (messenger != null) {
-            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_ID);
+            Message msg = Message.obtain(null, PersonalizationConstants.CREATE_USER_HEALTH_PROFILE);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto userIDDto = StringMapper.toDto(userID);
+			String userIDJson = gson.toJson(userIDDto);
+			data.putString("userID", userIDJson);
+			HealthProfileDto profileDto = HealthProfileMapper.toDto(profile);
+			String profileJson = gson.toJson(profileDto);
+			data.putString("profile", profileJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Updates the HealthProfile of a specified ALFRED user
+    public void updateUserHealthProfile(String userID, String valuesToUpdate, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_USER_HEALTH_PROFILE);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto userIDDto = StringMapper.toDto(userID);
+			String userIDJson = gson.toJson(userIDDto);
+			data.putString("userID", userIDJson);
+			StringDto valuesToUpdateDto = StringMapper.toDto(valuesToUpdate);
+			String valuesToUpdateJson = gson.toJson(valuesToUpdateDto);
+			data.putString("valuesToUpdate", valuesToUpdateJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Retrieves the HealthProfile of a specified ALFRED user
+    public void retrieveUserHealthProfile(String userID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_HEALTH_PROFILE);
 
             if (response != null)
                 msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
 
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto userIDDto = StringMapper.toDto(userID);
+			String userIDJson = gson.toJson(userIDDto);
+			data.putString("userID", userIDJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Deletes the HealthProfile of the specified user from the repository
+    public void deleteUserHealthProfile(String userID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.DELETE_USER_HEALTH_PROFILE);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto userIDDto = StringMapper.toDto(userID);
+			String userIDJson = gson.toJson(userIDDto);
+			data.putString("userID", userIDJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Creates a Group
+    public void createGroup(Group group, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.CREATE_GROUP);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			GroupDto groupDto = GroupMapper.toDto(group);
+			String groupJson = gson.toJson(groupDto);
+			data.putString("group", groupJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Updates the group with the specified ID
+    public void updateGroup(String groupID, String valuesToUpdate, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_GROUP);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto groupIDDto = StringMapper.toDto(groupID);
+			String groupIDJson = gson.toJson(groupIDDto);
+			data.putString("groupID", groupIDJson);
+			StringDto valuesToUpdateDto = StringMapper.toDto(valuesToUpdate);
+			String valuesToUpdateJson = gson.toJson(valuesToUpdateDto);
+			data.putString("valuesToUpdate", valuesToUpdateJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Retrieves a group by id
+    public void retrieveGroup(String groupID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_GROUP);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto groupIDDto = StringMapper.toDto(groupID);
+			String groupIDJson = gson.toJson(groupIDDto);
+			data.putString("groupID", groupIDJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Adds a member to the group with the specified ID
+    public void addMemberToGroup(String groupID, String memberID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.ADD_MEMBER_TO_GROUP);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto groupIDDto = StringMapper.toDto(groupID);
+			String groupIDJson = gson.toJson(groupIDDto);
+			data.putString("groupID", groupIDJson);
+			StringDto memberIDDto = StringMapper.toDto(memberID);
+			String memberIDJson = gson.toJson(memberIDDto);
+			data.putString("memberID", memberIDJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Removes a member from the group with the specified ID
+    public void removeMemberFromGroup(String groupID, String memberID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.REMOVE_MEMBER_FROM_GROUP);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto groupIDDto = StringMapper.toDto(groupID);
+			String groupIDJson = gson.toJson(groupIDDto);
+			data.putString("groupID", groupIDJson);
+			StringDto memberIDDto = StringMapper.toDto(memberID);
+			String memberIDJson = gson.toJson(memberIDDto);
+			data.putString("memberID", memberIDJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Retrieves all groups owned by the specified user
+    public void retrieveUsersGroups(String userID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USERS_GROUPS);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto userIDDto = StringMapper.toDto(userID);
+			String userIDJson = gson.toJson(userIDDto);
+			data.putString("userID", userIDJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Retrieves all groups where the specified user is a member
+    public void retrieveGroupsWithMember(String userID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_GROUPS_WITH_MEMBER);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto userIDDto = StringMapper.toDto(userID);
+			String userIDJson = gson.toJson(userIDDto);
+			data.putString("userID", userIDJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Retrieves all groups which match specified criteria
+    public void retrieveFilteredGroups(String searchUsersCriteria, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_FILTERED_GROUPS);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto searchUsersCriteriaDto = StringMapper.toDto(searchUsersCriteria);
+			String searchUsersCriteriaJson = gson.toJson(searchUsersCriteriaDto);
+			data.putString("searchUsersCriteria", searchUsersCriteriaJson);
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Retrieves all groups
+    public void retrieveAllGroups(PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_ALL_GROUPS);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+
+            Bundle data = new Bundle();
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+	// Deletes a group from the repository
+    public void deleteGroup(String groupID, PersonalizationResponse response) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, PersonalizationConstants.DELETE_GROUP);
+
+            if (response != null)
+                msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
+
+            Bundle data = new Bundle();
+
+            Gson gson = new Gson();
+			StringDto groupIDDto = StringMapper.toDto(groupID);
+			String groupIDJson = gson.toJson(groupIDDto);
+			data.putString("groupID", groupIDJson);
+            msg.setData(data);
             try {
                 messenger.send(msg);
             } catch (RemoteException e) {

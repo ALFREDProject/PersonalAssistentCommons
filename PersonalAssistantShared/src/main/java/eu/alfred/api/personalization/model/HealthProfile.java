@@ -42,6 +42,10 @@ public class HealthProfile {
     setId();
     setCreationDate();
   }
+  public HealthProfile (String id) {
+    this.id = id;
+    setCreationDate();
+  }
 
   public String getId() {
     return id;
@@ -282,8 +286,20 @@ public class HealthProfile {
     this.creationDate = new Date();
   }
 
+  public void setCreationDate(Date creationDate) {
+    this.creationDate = creationDate;
+  }
+
   @Override
   public String toString() {
-    return "id: " + getId() + ", userID: " + getUserID() + ", bloodType: " + getBloodType() + " ...";
+    final StringBuffer sb = new StringBuffer("HealthProfile{");
+    sb.append("id='").append(id).append('\'');
+    sb.append(", userID='").append(userID).append('\'');
+    sb.append(", creationDate=").append(creationDate);
+    sb.append(", bloodType=").append(bloodType);
+    sb.append(", weight=").append(weight);
+    sb.append(", height=").append(height);
+    sb.append('}');
+    return sb.toString();
   }
 }

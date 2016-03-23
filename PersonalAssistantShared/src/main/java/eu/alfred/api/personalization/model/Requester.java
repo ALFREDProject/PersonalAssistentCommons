@@ -2,13 +2,14 @@ package eu.alfred.api.personalization.model;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Requester implements Serializable {
 
   private String id;
   private String requesterAlfredId;
   private String targetAlfredId;
-  private HashMap<String,Boolean> accessRightsToAttributes;
+  private Map<String,Boolean> accessRightsToAttributes;
 
   public String getId() {
     return id;
@@ -28,11 +29,11 @@ public class Requester implements Serializable {
   public void setTargetAlfredId(String targetAlfredId) {
     this.targetAlfredId = targetAlfredId;
   }
-  public HashMap<String, Boolean> getAccessRightsToAttributes() {
+  public Map<String, Boolean> getAccessRightsToAttributes() {
     return accessRightsToAttributes;
   }
   public void setAccessRightsToAttributes(
-          HashMap<String, Boolean> accessRightsToAttributes) {
+          Map<String, Boolean> accessRightsToAttributes) {
     this.accessRightsToAttributes = accessRightsToAttributes;
   }
 }
