@@ -85,6 +85,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
     <orderEntry type="library" exported="" name="spring-core-4.1.9.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="jackson-core-2.7.0" level="project" />
     <orderEntry type="library" exported="" name="jcl-over-slf4j-1.7.13" level="project" />
@@ -93,7 +94,6 @@
     <orderEntry type="library" exported="" name="jsr311-api-0.11" level="project" />
     <orderEntry type="library" exported="" name="spring-beans-4.1.9.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="spring-expression-4.1.9.RELEASE" level="project" />
-    <orderEntry type="library" exported="" name="gson-1.7.2" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="aopalliance-1.0" level="project" />
     <orderEntry type="library" exported="" name="jackson-mapper-asl-1.9.0" level="project" />
