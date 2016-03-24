@@ -54,15 +54,11 @@ public class PersonalizationManager {
                 case PersonalizationConstants.CREATE_USER_HEALTH_PROFILE_RESPONSE:
                 case PersonalizationConstants.REMOVE_MEMBER_FROM_GROUP_RESPONSE:
 
-
-                    JSONObject jsonResponse = null;
-
                     try {
-	                    String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "{}");
-	                    Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
-                        jsonResponse = new JSONObject(json);
-                        personalizationSuccessResponse.OnSuccess(jsonResponse);
-                    } catch (JSONException e) {
+	                    String result = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON);
+	                    Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + result);
+                        personalizationSuccessResponse.OnSuccess(result);
+                    } catch (Exception e) {
                         e.printStackTrace();
                         personalizationSuccessResponse.OnError(e);
                     }
