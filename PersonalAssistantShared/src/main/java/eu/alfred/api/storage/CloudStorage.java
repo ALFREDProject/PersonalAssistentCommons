@@ -1,16 +1,14 @@
 package eu.alfred.api.storage;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Base64;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.sql.Connection;
 
 import eu.alfred.api.storage.responses.BucketResponse;
 
@@ -26,10 +24,10 @@ public class CloudStorage {
         this.messenger = messenger;
     }
 
-    private class SaveJsonResponse extends Handler {
+    private class CloudStorageHttpResponse extends Handler {
         private BucketResponse bucketResponse;
 
-        public SaveJsonResponse(BucketResponse bucketResponse){
+        public CloudStorageHttpResponse(BucketResponse bucketResponse){
             this.bucketResponse = bucketResponse;
         }
 
@@ -39,40 +37,21 @@ public class CloudStorage {
 
             switch (respCode) {
                 //Client asked for a list of contacts. Service delivers them with this response Id
-                case StorageConstants.WRITE_STRUCTURED_DATA_RESPONSE: {
-                    JSONObject jsonResponse = null;
+                case StorageConstants.WRITE_STRUCTURED_DATA_RESPONSE:
+                case StorageConstants.WRITE_BINARY_DATA_RESPONSE:
+                case StorageConstants.UPDATE_STRUCTURED_DATA_RESPONSE:
+                case StorageConstants.UPDATE_BINARY_DATA_RESPONSE:
+                case StorageConstants.DELETE_STRUCTURED_DATA_RESPONSE:
+                case StorageConstants.DELETE_BINARY_DATA_RESPONSE:
+                case StorageConstants.CREATE_BUCKET_RESPONSE:
+                case StorageConstants.DELETE_BUCKET_RESPONSE:
 
+
+                {
                     try {
-                        jsonResponse = new JSONObject(msg.getData().getString("JsonData", "{}"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        bucketResponse.OnError(e);
-                    }
-
-                    bucketResponse.OnSuccess(jsonResponse);
-                    break;
-                }
-            }
-        }
-    }
-    private class ReadJsonResponse extends Handler {
-        private BucketResponse bucketResponse;
-
-        public ReadJsonResponse(BucketResponse bucketResponse){
-            this.bucketResponse = bucketResponse;
-        }
-
-        @Override
-        public void handleMessage(Message msg){
-            int respCode = msg.what;
-
-            switch (respCode) {
-                //Client asked for a list of contacts. Service delivers them with this response Id
-                case StorageConstants.READ_STRUCTURED_DATA_RESPONSE: {
-                    JSONArray jsonResponse = null;
-
-                    try {
-                        jsonResponse = new JSONArray(msg.getData().getString("response"));
+                        String httpCode = Integer.toString(msg.getData().getInt("HttpCode"));
+                        JSONObject jsonResponse = new JSONObject();
+                        jsonResponse.put("response",httpCode);
                         bucketResponse.OnSuccess(jsonResponse);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -83,72 +62,203 @@ public class CloudStorage {
             }
         }
     }
-    private class DeleteJsonResponse extends Handler {
 
+    private class ReadDataResponse extends Handler {
         private BucketResponse bucketResponse;
 
-        public DeleteJsonResponse(BucketResponse bucketResponse) {
+        public ReadDataResponse(BucketResponse bucketResponse){
             this.bucketResponse = bucketResponse;
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(Message msg){
             int respCode = msg.what;
+
             switch (respCode) {
                 //Client asked for a list of contacts. Service delivers them with this response Id
-                case StorageConstants.DELETE_STRUCTURED_DATA_RESPONSE: {
-                    JSONObject jsonResponse = null;
+                case StorageConstants.READ_STRUCTURED_DATA_RESPONSE:
+                    JSONArray jsonResponse = null;
 
                     try {
-                        jsonResponse = new JSONObject(msg.getData().getString("JsonData", "{}"));
+                        jsonResponse = new JSONArray(msg.getData().getString("response"));
+                        bucketResponse.OnSuccess(jsonResponse);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         bucketResponse.OnError(e);
                     }
-
-                    bucketResponse.OnSuccess(jsonResponse);
                     break;
-                }
-            }
-        }
-    }
-    private class CreateBucketResponse extends Handler {
-
-        private BucketResponse bucketResponse;
-
-        public CreateBucketResponse(BucketResponse bucketResponse){
-            this.bucketResponse = bucketResponse;
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            int respCode = msg.what;
-            switch (respCode) {
-                //Client asked for a list of contacts. Service delivers them with this response Id
-                case StorageConstants.CREATE_BUCKET_RESPONSE: {
-                    JSONObject jsonResponse = null;
+                case StorageConstants.READ_BINARY_DATA_RESPONSE:{
+                    String binaryResponse = null;
 
                     try {
-                        jsonResponse = new JSONObject(msg.getData().getString("JsonData", "{}"));
-                    } catch (JSONException e) {
+                        binaryResponse = msg.getData().getString("response", "");
+                        bucketResponse.OnSuccess(binaryResponse.getBytes());
+                    } catch (Exception e) {
                         e.printStackTrace();
                         bucketResponse.OnError(e);
                     }
-
-                    bucketResponse.OnSuccess(jsonResponse);
                     break;
                 }
             }
         }
     }
 
-    //region Bucket-Methods
-    public void createBucket(String bucketId, BucketResponse bucketResponse) {
+
+    public void writeJsonObject(String bucketId, JSONObject jsonObject, BucketResponse bucketResponse){
         if (messenger != null) {
-            Message msg = Message.obtain(null, StorageConstants.CREATE_BUCKET);
+            Message msg = Message.obtain(null, StorageConstants.WRITE_STRUCTURED_DATA);
 
             if (bucketResponse != null)
-                msg.replyTo = new Messenger(new CreateBucketResponse(bucketResponse));
+                msg.replyTo = new Messenger(new CloudStorageHttpResponse(bucketResponse));
+
+            //The PersonalAssistantService should respond to this Handler
+            msg.getData().putString("bucketId", bucketId);
+            msg.getData().putString("JsonData", jsonObject.toString());
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void writeBinaryData(String bucketId, String binaryKey, byte[] data, BucketResponse bucketResponse){
+        if (messenger != null) {
+            Message msg = Message.obtain(null, StorageConstants.WRITE_BINARY_DATA);
+
+            if (bucketResponse != null)
+                msg.replyTo = new Messenger(new CloudStorageHttpResponse(bucketResponse));
+
+            //The PersonalAssistantService should respond to this Handler
+            msg.getData().putString("bucketId", bucketId);
+            msg.getData().putString("binaryKey", binaryKey);
+            msg.getData().putString("binaryBase64Data", Base64.encodeToString(data, Base64.DEFAULT));
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void readJsonArray(String bucketId, JSONObject jsonQuery, BucketResponse bucketResponse){
+        if (messenger != null) {
+            Message msg = Message.obtain(null, StorageConstants.READ_STRUCTURED_DATA);
+
+            if (bucketResponse != null)
+                msg.replyTo = new Messenger(new ReadDataResponse(bucketResponse));
+
+            //The PersonalAssistantService should respond to this Handler
+            msg.getData().putString("bucketId", bucketId);
+            msg.getData().putString("jsonQueryData", jsonQuery.toString());
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void readBinaryArray(String bucketId, String binaryKey, byte[] data, BucketResponse bucketResponse){
+        if (messenger != null) {
+            Message msg = Message.obtain(null, StorageConstants.READ_BINARY_DATA);
+
+            if (bucketResponse != null)
+                msg.replyTo = new Messenger(new ReadDataResponse(bucketResponse));
+
+            //The PersonalAssistantService should respond to this Handler
+            msg.getData().putString("bucketId", bucketId);
+            msg.getData().putString("binaryKey", binaryKey);
+            msg.getData().putString("binaryBase64Data", Base64.encodeToString(data, Base64.DEFAULT));
+            msg.getData().putByteArray("binaryData", data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void updateJsonObject(String bucketId, JSONObject jsonObject, JSONObject queryJsonObject, BucketResponse bucketResponse) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, StorageConstants.UPDATE_STRUCTURED_DATA);
+
+            if (bucketResponse != null)
+                msg.replyTo = new Messenger(new CloudStorageHttpResponse(bucketResponse));
+
+            //The PersonalAssistantService should respond to this Handler
+            msg.getData().putString("bucketId", bucketId);
+            msg.getData().putString("JsonData", jsonObject.toString());
+            msg.getData().putString("JsonQueryData", queryJsonObject.toString());
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void updateBinaryData(String bucketId, String binaryKey, byte[] data, BucketResponse bucketResponse) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, StorageConstants.UPDATE_BINARY_DATA);
+
+            if (bucketResponse != null)
+                msg.replyTo = new Messenger(new CloudStorageHttpResponse(bucketResponse));
+
+            //The PersonalAssistantService should respond to this Handler
+            msg.getData().putString("bucketId", bucketId);
+            msg.getData().putString("binaryKey", binaryKey);
+            msg.getData().putString("binaryBase64Data", Base64.encodeToString(data, Base64.DEFAULT));
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void deleteJsonObject(String bucketId, JSONObject queryJsonObject, BucketResponse bucketResponse){
+        if (messenger != null) {
+            Message msg = Message.obtain(null, StorageConstants.DELETE_STRUCTURED_DATA);
+
+            if (bucketResponse != null)
+                msg.replyTo = new Messenger(new CloudStorageHttpResponse(bucketResponse));
+
+            //The PersonalAssistantService should respond to this Handler
+            msg.getData().putString("bucketId", bucketId);
+            msg.getData().putString("jsonQueryData", queryJsonObject.toString());
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void deleteBinaryData(String bucketId, String binaryKey, BucketResponse bucketResponse){
+        if (messenger != null) {
+            Message msg = Message.obtain(null, StorageConstants.DELETE_BINARY_DATA);
+
+            if (bucketResponse != null)
+                msg.replyTo = new Messenger(new CloudStorageHttpResponse(bucketResponse));
+
+            //The PersonalAssistantService should respond to this Handler
+            msg.getData().putString("bucketId", bucketId);
+            msg.getData().putString("binaryKey", binaryKey);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void createStructuredBucket(String bucketId, BucketResponse bucketResponse) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, StorageConstants.CREATE_STRUCTURED_BUCKET);
+
+            if (bucketResponse != null)
+                msg.replyTo = new Messenger(new CloudStorageHttpResponse(bucketResponse));
 
             //The PersonalAssistantService should respond to this Handler
             msg.getData().putString("bucketId", bucketId);
@@ -162,119 +272,42 @@ public class CloudStorage {
             }
         }
     }
-    //endregion
 
-    //region Read-Methods
-    /*public void readJsonObject(JSONObject jsonObject){
-        saveJsonObject("", jsonObject, null);
-    }
-
-    public void readJsonObject(JSONObject jsonObject, BucketResponse bucketResponse){
-        saveJsonObject("", jsonObject, bucketResponse);
-    }
-
-    public void readJsonObject(String bucketId, JSONObject jsonObject){
-        saveJsonObject(bucketId, jsonObject, null);
-    }*/
-
-    public void readJsonArray(String bucketId, JSONObject jsonQuery, BucketResponse bucketResponse){
+    public void createBinaryBucket(String bucketId, BucketResponse bucketResponse) {
         if (messenger != null) {
-            Message msg = Message.obtain(null, StorageConstants.READ_STRUCTURED_DATA);
+            Message msg = Message.obtain(null, StorageConstants.CREATE_BINARY_BUCKET);
 
             if (bucketResponse != null)
-                msg.replyTo = new Messenger(new ReadJsonResponse(bucketResponse));
+                msg.replyTo = new Messenger(new CloudStorageHttpResponse(bucketResponse));
 
             //The PersonalAssistantService should respond to this Handler
             msg.getData().putString("bucketId", bucketId);
-            msg.getData().putString("jsonQueryData", jsonQuery.toString());
+            //Will be changed. Someday.
+            msg.getData().putString("bucketType", "Binary");
             try {
                 messenger.send(msg);
             } catch (RemoteException e) {
                 e.printStackTrace();
+                bucketResponse.OnError(e);
             }
         }
     }
-    //endregion
 
-    //region Save-Methods
-    /*public void saveJsonObject(JSONObject jsonObject){
-        saveJsonObject("", jsonObject, null);
-    }
-
-    public void saveJsonObject(JSONObject jsonObject, BucketResponse bucketResponse){
-        saveJsonObject("", jsonObject, bucketResponse);
-    }
-
-    public void saveJsonObject(String bucketId, JSONObject jsonObject){
-        saveJsonObject(bucketId, jsonObject, null);
-    }*/
-
-    public void saveJsonObject(String bucketId, JSONObject jsonObject, BucketResponse bucketResponse){
+    public void deleteBucket(String bucketId, BucketResponse bucketResponse) {
         if (messenger != null) {
-            Message msg = Message.obtain(null, StorageConstants.WRITE_STRUCTURED_DATA);
+            Message msg = Message.obtain(null, StorageConstants.DELETE_BUCKET);
 
             if (bucketResponse != null)
-                msg.replyTo = new Messenger(new SaveJsonResponse(bucketResponse));
+                msg.replyTo = new Messenger(new CloudStorageHttpResponse(bucketResponse));
 
             //The PersonalAssistantService should respond to this Handler
             msg.getData().putString("bucketId", bucketId);
-            msg.getData().putString("JsonData", jsonObject.toString());
             try {
                 messenger.send(msg);
             } catch (RemoteException e) {
                 e.printStackTrace();
+                bucketResponse.OnError(e);
             }
         }
     }
-    //endregion
-
-    //region Update-Methods
-    /*public void updateJsonObject(JSONObject jsonObject, JSONObject queryJsonObject){
-        updateJsonObject("", jsonObject, queryJsonObject, null);
-    }
-
-    public void updateJsonObject(JSONObject jsonObject, JSONObject queryJsonObject, BucketResponse bucketResponse){
-        updateJsonObject("", jsonObject, queryJsonObject, bucketResponse);
-    }
-
-    public void updateJsonObject(String bucketId, JSONObject jsonObject, JSONObject queryJsonObject){
-        updateJsonObject(bucketId, jsonObject, queryJsonObject, null);
-    }*/
-
-    public void updateJsonObject(String bucketId, JSONObject jsonObject, JSONObject queryJsonObject, BucketResponse bucketResponse){
-
-    }
-    //endregion
-
-    //region Delete-Methods
-    /*public void deleteJsonObject(JSONObject jsonObject, JSONObject queryJsonObject){
-        deleteJsonObject("", jsonObject, queryJsonObject, null);
-    }
-
-    public void deleteJsonObject(JSONObject jsonObject, JSONObject queryJsonObject, BucketResponse bucketResponse){
-        deleteJsonObject("", jsonObject, queryJsonObject, bucketResponse);
-    }
-
-    public void deleteJsonObject(String bucketId, JSONObject jsonObject, JSONObject queryJsonObject){
-        deleteJsonObject(bucketId, jsonObject, queryJsonObject, null);
-    }*/
-
-    public void deleteJsonObject(String bucketId, JSONObject queryJsonObject, BucketResponse bucketResponse){
-        if (messenger != null) {
-            Message msg = Message.obtain(null, StorageConstants.DELETE_STRUCTURED_DATA);
-
-            if (bucketResponse != null)
-                msg.replyTo = new Messenger(new DeleteJsonResponse(bucketResponse));
-
-            //The PersonalAssistantService should respond to this Handler
-            msg.getData().putString("bucketId", bucketId);
-            msg.getData().putString("jsonQueryData", queryJsonObject.toString());
-            try {
-                messenger.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    //endregion
 }

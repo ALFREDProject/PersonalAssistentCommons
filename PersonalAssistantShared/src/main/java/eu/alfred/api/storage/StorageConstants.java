@@ -21,7 +21,11 @@ public class StorageConstants {
     public static final int DELETE_STRUCTURED_DATA_RESPONSE = 70014;
     public static final int DELETE_BINARY_DATA = 70015;
     public static final int DELETE_BINARY_DATA_RESPONSE = 70016;
-    public static final int CREATE_BUCKET = 70017;
-    public static final int CREATE_BUCKET_RESPONSE = 70018;
+
+    public static final int CREATE_STRUCTURED_BUCKET = 70017;
+    public static final int CREATE_BINARY_BUCKET = 70018;
+    public static final int CREATE_BUCKET_RESPONSE = 70019;
+    public static final int DELETE_BUCKET = 70020;
+    public static final int DELETE_BUCKET_RESPONSE = 70021;
     //endregion
 }
