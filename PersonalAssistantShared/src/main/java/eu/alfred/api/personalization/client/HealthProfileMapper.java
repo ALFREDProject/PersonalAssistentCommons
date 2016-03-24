@@ -1,5 +1,7 @@
 package eu.alfred.api.personalization.client;
 
+import java.util.Date;
+
 import eu.alfred.api.personalization.model.HealthProfile;
 import eu.alfred.api.personalization.model.LengthUnit;
 import eu.alfred.api.personalization.model.WeightUnit;
@@ -38,7 +40,7 @@ public class HealthProfileMapper {
 		profile.setBodyTemperatureAtRest((float)profileRequest.bodyTemperatureAtRest);
 		profile.setLifestyleHealthRelated(profileRequest.lifestyleHealthRelated);
 		profile.setSocietyParticipationScore(profileRequest.societyParticipationScore);
-		profile.setCreationDate(profileRequest.creationDate);
+		profile.setCreationDate(new Date(Long.parseLong(profileRequest.creationDate)));
 
 		return profile;
 	}
@@ -76,7 +78,7 @@ public class HealthProfileMapper {
 		profileRequest.bodyTemperatureAtRest = profile.getBodyTemperatureAtRest();
 		profileRequest.lifestyleHealthRelated = profile.getLifestyleHealthRelated();
 		profileRequest.societyParticipationScore = profile.getSocietyParticipationScore();
-		profileRequest.creationDate = profile.getCreationDate();
+		profileRequest.creationDate = Long.toString(profile.getCreationDate().getTime());
 
 		return profileRequest;
 	}

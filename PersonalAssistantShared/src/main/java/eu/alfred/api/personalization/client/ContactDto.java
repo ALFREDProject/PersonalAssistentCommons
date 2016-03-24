@@ -2,7 +2,6 @@ package eu.alfred.api.personalization.client;
 
 import com.google.gson.annotations.Expose;
 
-import java.util.Date;
 import java.util.Map;
 
 import eu.alfred.api.personalization.model.AccessLevels;
@@ -31,7 +30,7 @@ public class ContactDto {
 	@Expose
 	public Gender gender;
 	@Expose
-	public Date dateOfBirth;
+	public String dateOfBirth;
 	@Expose
 	public String phone;
 	@Expose

@@ -1,5 +1,7 @@
 package eu.alfred.api.personalization.client;
 
+import java.util.Date;
+
 import eu.alfred.api.personalization.model.Contact;
 
 public class ContactMapper {
@@ -16,7 +18,7 @@ public class ContactMapper {
 		contact.setLastName(contactDto.lastName);
 		contact.setPrefferedName(contactDto.prefferedName);
 		contact.setGender(contactDto.gender);
-		contact.setDateOfBirth(contactDto.dateOfBirth);
+		contact.setDateOfBirth(new Date(Long.parseLong(contactDto.dateOfBirth)));
 		contact.setPhone(contactDto.phone);
 		contact.setMobilePhone(contactDto.mobilePhone);
 		contact.setEmail(contactDto.email);
@@ -42,7 +44,7 @@ public class ContactMapper {
 		contactRequest.lastName = contact.getLastName();
 		contactRequest.prefferedName = contact.getPrefferedName();
 		contactRequest.gender = contact.getGender();
-		contactRequest.dateOfBirth = contact.getDateOfBirth();
+		contactRequest.dateOfBirth = Long.toString(contact.getDateOfBirth().getTime());
 		contactRequest.phone = contact.getPhone();
 		contactRequest.mobilePhone = contact.getMobilePhone();
 		contactRequest.email = contact.getEmail();

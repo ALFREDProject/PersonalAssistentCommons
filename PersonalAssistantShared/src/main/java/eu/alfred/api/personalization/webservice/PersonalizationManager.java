@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -20,6 +21,8 @@ import eu.alfred.api.personalization.client.*;
 public class PersonalizationManager {
 
     private Messenger messenger;
+
+	private final static String TAG = "PMgr";
 
     private class PersonalizationSuccessResponse extends Handler {
         private PersonalizationResponse personalizationSuccessResponse;
@@ -55,7 +58,9 @@ public class PersonalizationManager {
                     JSONObject jsonResponse = null;
 
                     try {
-                        jsonResponse = new JSONObject(msg.getData().getString("JsonData", "{}"));
+	                    String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "{}");
+	                    Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
+                        jsonResponse = new JSONObject(json);
                         personalizationSuccessResponse.OnSuccess(jsonResponse);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -80,32 +85,22 @@ public class PersonalizationManager {
             switch (respCode) {
                 case PersonalizationConstants.CREATE_USER_PROFILE_FILTER_RESPONSE:
                 case PersonalizationConstants.CREATE_USER_PROFILE_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_CONTACTS_BY_CRITERIA_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_PROFILES_LAST_SYNC_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USER_PROFILE_RESPONSE:
                 case PersonalizationConstants.UPDATE_REQUESTER_RESPONSE:
                 case PersonalizationConstants.UPDATE_USER_CONTACT_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_PROFILES_BY_CRITERIA_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_REQUESTER_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USER_REQUESTER_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_CONTACTS_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_ID_RESPONSE:
-                case PersonalizationConstants.GET_UNSYNCHRONIZED_USER_PROFILES_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_ALL_USER_CONTACTS_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_GROUP_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_GROUPS_WITH_MEMBER_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_FILTERED_GROUPS_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USER_CONTACT_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USER_HEALTH_PROFILE_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_PROFILE_SENSORED_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_PROFILES_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USERS_GROUPS_RESPONSE:
                 case PersonalizationConstants.UPDATE_GROUP_RESPONSE:
 
-                    JSONArray jsonResponse = null;
+                    JSONObject jsonResponse = null;
 
                     try {
-                        jsonResponse = new JSONArray(msg.getData().getString("response"));
+	                    String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "{}");
+	                    Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
+                        jsonResponse = new JSONObject(json);
                         personalizationDataResponse.OnSuccess(jsonResponse);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -115,6 +110,47 @@ public class PersonalizationManager {
             }
         }
     }
+
+	private class PersonalizationDataListResponse extends Handler {
+		private PersonalizationResponse personalizationDataResponse;
+
+		public PersonalizationDataListResponse(PersonalizationResponse personalizationDataResponse) {
+			this.personalizationDataResponse = personalizationDataResponse;
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			int respCode = msg.what;
+
+			switch (respCode) {
+				case PersonalizationConstants.RETRIEVE_USER_CONTACTS_BY_CRITERIA_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_USER_PROFILES_LAST_SYNC_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_USER_PROFILES_BY_CRITERIA_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_USER_CONTACTS_RESPONSE:
+				case PersonalizationConstants.GET_UNSYNCHRONIZED_USER_PROFILES_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_ALL_USER_CONTACTS_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_GROUPS_WITH_MEMBER_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_FILTERED_GROUPS_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_USER_PROFILE_SENSORED_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_USER_PROFILES_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_USERS_GROUPS_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_ALL_GROUPS_RESPONSE:
+
+					JSONArray jsonResponse = null;
+
+					try {
+						String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "{}");
+						Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
+						jsonResponse = new JSONArray(json);
+						personalizationDataResponse.OnSuccess(jsonResponse);
+					} catch (JSONException e) {
+						e.printStackTrace();
+						personalizationDataResponse.OnError(e);
+					}
+					break;
+			}
+		}
+	}
 
     public PersonalizationManager(Messenger messenger) {
         this.messenger = messenger;
@@ -131,7 +167,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
+			Gson gson = new Gson();
 			UserProfileDto newAlfredUserDto = UserProfileMapper.toDto(newAlfredUser);
 			String newAlfredUserJson = gson.toJson(newAlfredUserDto);
 			data.putString("newAlfredUser", newAlfredUserJson);
@@ -154,10 +190,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto userIDDto = StringMapper.toDto(userID);
-			String userIDJson = gson.toJson(userIDDto);
-			data.putString("userID", userIDJson);
+			data.putString("userID", userID);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -173,14 +206,11 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILE_SENSORED);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto searchUsersCriteriaDto = StringMapper.toDto(searchUsersCriteria);
-			String searchUsersCriteriaJson = gson.toJson(searchUsersCriteriaDto);
-			data.putString("searchUsersCriteria", searchUsersCriteriaJson);
+			data.putString("searchUsersCriteria", searchUsersCriteria);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -196,14 +226,11 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILES);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto searchUsersCriteriaDto = StringMapper.toDto(searchUsersCriteria);
-			String searchUsersCriteriaJson = gson.toJson(searchUsersCriteriaDto);
-			data.putString("searchUsersCriteria", searchUsersCriteriaJson);
+			data.putString("searchUsersCriteria", searchUsersCriteria);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -223,13 +250,8 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto userIDDto = StringMapper.toDto(userID);
-			String userIDJson = gson.toJson(userIDDto);
-			data.putString("userID", userIDJson);
-			StringDto valuesToUpdateDto = StringMapper.toDto(valuesToUpdate);
-			String valuesToUpdateJson = gson.toJson(valuesToUpdateDto);
-			data.putString("valuesToUpdate", valuesToUpdateJson);
+			data.putString("userID", userID);
+			data.putString("valuesToUpdate", valuesToUpdate);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -249,10 +271,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto userIDDto = StringMapper.toDto(userID);
-			String userIDJson = gson.toJson(userIDDto);
-			data.putString("userID", userIDJson);
+			data.putString("userID", userID);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -268,14 +287,11 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.GET_UNSYNCHRONIZED_USER_PROFILES);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto lastSyncDateDto = StringMapper.toDto(lastSyncDate);
-			String lastSyncDateJson = gson.toJson(lastSyncDateDto);
-			data.putString("lastSyncDate", lastSyncDateJson);
+			data.putString("lastSyncDate", lastSyncDate);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -295,10 +311,8 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto userIDDto = StringMapper.toDto(userID);
-			String userIDJson = gson.toJson(userIDDto);
-			data.putString("userID", userIDJson);
+			Gson gson = new Gson();
+			data.putString("userID", userID);
 			ContactDto newContactDto = ContactMapper.toDto(newContact);
 			String newContactJson = gson.toJson(newContactDto);
 			data.putString("newContact", newContactJson);
@@ -317,14 +331,11 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_ALL_USER_CONTACTS);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto userIDDto = StringMapper.toDto(userID);
-			String userIDJson = gson.toJson(userIDDto);
-			data.putString("userID", userIDJson);
+			data.putString("userID", userID);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -340,17 +351,12 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_CONTACTS);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto userIDDto = StringMapper.toDto(userID);
-			String userIDJson = gson.toJson(userIDDto);
-			data.putString("userID", userIDJson);
-			StringDto searchContactsCriteriaDto = StringMapper.toDto(searchContactsCriteria);
-			String searchContactsCriteriaJson = gson.toJson(searchContactsCriteriaDto);
-			data.putString("searchContactsCriteria", searchContactsCriteriaJson);
+			data.putString("userID", userID);
+			data.putString("searchContactsCriteria", searchContactsCriteria);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -370,13 +376,8 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto contactIDDto = StringMapper.toDto(contactID);
-			String contactIDJson = gson.toJson(contactIDDto);
-			data.putString("contactID", contactIDJson);
-			StringDto valuesToUpdateDto = StringMapper.toDto(valuesToUpdate);
-			String valuesToUpdateJson = gson.toJson(valuesToUpdateDto);
-			data.putString("valuesToUpdate", valuesToUpdateJson);
+			data.putString("contactID", contactID);
+			data.putString("valuesToUpdate", valuesToUpdate);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -396,10 +397,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto contactIDDto = StringMapper.toDto(contactID);
-			String contactIDJson = gson.toJson(contactIDDto);
-			data.putString("contactID", contactIDJson);
+			data.putString("contactID", contactID);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -419,10 +417,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto contactIDDto = StringMapper.toDto(contactID);
-			String contactIDJson = gson.toJson(contactIDDto);
-			data.putString("contactID", contactIDJson);
+			data.putString("contactID", contactID);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -442,7 +437,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
+			Gson gson = new Gson();
 			RequesterDto newServicesRequesterDto = RequesterMapper.toDto(newServicesRequester);
 			String newServicesRequesterJson = gson.toJson(newServicesRequesterDto);
 			data.putString("newServicesRequester", newServicesRequesterJson);
@@ -465,10 +460,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto requesterIdDto = StringMapper.toDto(requesterId);
-			String requesterIdJson = gson.toJson(requesterIdDto);
-			data.putString("requesterId", requesterIdJson);
+			data.putString("requesterId", requesterId);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -488,13 +480,8 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto requesterAlfredIdDto = StringMapper.toDto(requesterAlfredId);
-			String requesterAlfredIdJson = gson.toJson(requesterAlfredIdDto);
-			data.putString("requesterAlfredId", requesterAlfredIdJson);
-			StringDto targetAlfredIdDto = StringMapper.toDto(targetAlfredId);
-			String targetAlfredIdJson = gson.toJson(targetAlfredIdDto);
-			data.putString("targetAlfredId", targetAlfredIdJson);
+			data.putString("requesterAlfredId", requesterAlfredId);
+			data.putString("targetAlfredId", targetAlfredId);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -514,13 +501,8 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto requesterIdDto = StringMapper.toDto(requesterId);
-			String requesterIdJson = gson.toJson(requesterIdDto);
-			data.putString("requesterId", requesterIdJson);
-			StringDto valuesToUpdateDto = StringMapper.toDto(valuesToUpdate);
-			String valuesToUpdateJson = gson.toJson(valuesToUpdateDto);
-			data.putString("valuesToUpdate", valuesToUpdateJson);
+			data.putString("requesterId", requesterId);
+			data.putString("valuesToUpdate", valuesToUpdate);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -540,10 +522,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto requesterIdDto = StringMapper.toDto(requesterId);
-			String requesterIdJson = gson.toJson(requesterIdDto);
-			data.putString("requesterId", requesterIdJson);
+			data.putString("requesterId", requesterId);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -563,10 +542,8 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto userIDDto = StringMapper.toDto(userID);
-			String userIDJson = gson.toJson(userIDDto);
-			data.putString("userID", userIDJson);
+			Gson gson = new Gson();
+			data.putString("userID", userID);
 			HealthProfileDto profileDto = HealthProfileMapper.toDto(profile);
 			String profileJson = gson.toJson(profileDto);
 			data.putString("profile", profileJson);
@@ -589,13 +566,8 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto userIDDto = StringMapper.toDto(userID);
-			String userIDJson = gson.toJson(userIDDto);
-			data.putString("userID", userIDJson);
-			StringDto valuesToUpdateDto = StringMapper.toDto(valuesToUpdate);
-			String valuesToUpdateJson = gson.toJson(valuesToUpdateDto);
-			data.putString("valuesToUpdate", valuesToUpdateJson);
+			data.putString("userID", userID);
+			data.putString("valuesToUpdate", valuesToUpdate);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -615,10 +587,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto userIDDto = StringMapper.toDto(userID);
-			String userIDJson = gson.toJson(userIDDto);
-			data.putString("userID", userIDJson);
+			data.putString("userID", userID);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -638,10 +607,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto userIDDto = StringMapper.toDto(userID);
-			String userIDJson = gson.toJson(userIDDto);
-			data.putString("userID", userIDJson);
+			data.putString("userID", userID);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -661,7 +627,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
+			Gson gson = new Gson();
 			GroupDto groupDto = GroupMapper.toDto(group);
 			String groupJson = gson.toJson(groupDto);
 			data.putString("group", groupJson);
@@ -684,13 +650,8 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto groupIDDto = StringMapper.toDto(groupID);
-			String groupIDJson = gson.toJson(groupIDDto);
-			data.putString("groupID", groupIDJson);
-			StringDto valuesToUpdateDto = StringMapper.toDto(valuesToUpdate);
-			String valuesToUpdateJson = gson.toJson(valuesToUpdateDto);
-			data.putString("valuesToUpdate", valuesToUpdateJson);
+			data.putString("groupID", groupID);
+			data.putString("valuesToUpdate", valuesToUpdate);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -710,10 +671,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto groupIDDto = StringMapper.toDto(groupID);
-			String groupIDJson = gson.toJson(groupIDDto);
-			data.putString("groupID", groupIDJson);
+			data.putString("groupID", groupID);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -733,13 +691,8 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto groupIDDto = StringMapper.toDto(groupID);
-			String groupIDJson = gson.toJson(groupIDDto);
-			data.putString("groupID", groupIDJson);
-			StringDto memberIDDto = StringMapper.toDto(memberID);
-			String memberIDJson = gson.toJson(memberIDDto);
-			data.putString("memberID", memberIDJson);
+			data.putString("groupID", groupID);
+			data.putString("memberID", memberID);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -759,13 +712,8 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto groupIDDto = StringMapper.toDto(groupID);
-			String groupIDJson = gson.toJson(groupIDDto);
-			data.putString("groupID", groupIDJson);
-			StringDto memberIDDto = StringMapper.toDto(memberID);
-			String memberIDJson = gson.toJson(memberIDDto);
-			data.putString("memberID", memberIDJson);
+			data.putString("groupID", groupID);
+			data.putString("memberID", memberID);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -781,14 +729,11 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USERS_GROUPS);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto userIDDto = StringMapper.toDto(userID);
-			String userIDJson = gson.toJson(userIDDto);
-			data.putString("userID", userIDJson);
+			data.putString("userID", userID);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -804,14 +749,11 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_GROUPS_WITH_MEMBER);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto userIDDto = StringMapper.toDto(userID);
-			String userIDJson = gson.toJson(userIDDto);
-			data.putString("userID", userIDJson);
+			data.putString("userID", userID);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -827,14 +769,11 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_FILTERED_GROUPS);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto searchUsersCriteriaDto = StringMapper.toDto(searchUsersCriteria);
-			String searchUsersCriteriaJson = gson.toJson(searchUsersCriteriaDto);
-			data.putString("searchUsersCriteria", searchUsersCriteriaJson);
+			data.putString("searchUsersCriteria", searchUsersCriteria);
             msg.setData(data);
             try {
                 messenger.send(msg);
@@ -850,7 +789,7 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_ALL_GROUPS);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
             msg.setData(data);
@@ -872,10 +811,7 @@ public class PersonalizationManager {
 
             Bundle data = new Bundle();
 
-            Gson gson = new Gson();
-			StringDto groupIDDto = StringMapper.toDto(groupID);
-			String groupIDJson = gson.toJson(groupIDDto);
-			data.putString("groupID", groupIDJson);
+			data.putString("groupID", groupID);
             msg.setData(data);
             try {
                 messenger.send(msg);

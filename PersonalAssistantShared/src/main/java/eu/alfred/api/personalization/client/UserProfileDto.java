@@ -2,7 +2,6 @@ package eu.alfred.api.personalization.client;
 
 import com.google.gson.annotations.Expose;
 
-import java.util.Date;
 import java.util.List;
 
 import eu.alfred.api.personalization.model.Address;
@@ -17,17 +16,17 @@ import eu.alfred.api.personalization.model.MyersBriggsTypeIndicator;
 
 public class UserProfileDto {
 	@Expose
-	public Date alfedAppInstalationDate;
+	public String alfedAppInstalationDate;
 	@Expose
 	public String alfredUserName;
 	@Expose
-	public Date anniversaryDate;
+	public String anniversaryDate;
 	@Expose
 	public String citizenship;
 	@Expose
 	public List<String> culturalOrFamilyNeeds;
 	@Expose
-	public Date dateOfBirth;
+	public String dateOfBirth;
 	@Expose
 	public EducationLevel educationLevel;
 	@Expose
@@ -49,7 +48,7 @@ public class UserProfileDto {
 	@Expose
 	public String lastName;
 	@Expose
-	public Date lastUpdated;
+	public String lastUpdated;
 	@Expose
 	public MaritalStatus maritalStatus;
 	@Expose

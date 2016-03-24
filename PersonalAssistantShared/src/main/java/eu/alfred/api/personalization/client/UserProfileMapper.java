@@ -1,6 +1,7 @@
 package eu.alfred.api.personalization.client;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import eu.alfred.api.personalization.model.UserProfile;
 
@@ -15,7 +16,7 @@ public class UserProfileMapper {
 		result.setLastName(userProfile.lastName);
 		result.setPrefferedName(userProfile.prefferedName);
 		result.setGender(userProfile.gender);
-		result.setDateOfBirth(userProfile.dateOfBirth);
+		result.setDateOfBirth(new Date(Long.parseLong(userProfile.dateOfBirth)));
 		result.setPhone(userProfile.phone);
 		result.setMobilePhone(userProfile.mobilePhone);
 		result.setEmail(userProfile.email);
@@ -30,7 +31,7 @@ public class UserProfileMapper {
 		result.setEmploymentStatus(userProfile.employmentStatus);
 		result.setHealthInsurance(userProfile.healthInsurance);
 		result.setProfession(userProfile.profession);
-		result.setAnniversaryDate(userProfile.anniversaryDate);
+		result.setAnniversaryDate(new Date(Long.parseLong(userProfile.anniversaryDate)));
 		result.setNextOfKin(userProfile.nextOfKin);
 		result.setMyersBriggsIndicator(userProfile.myersBriggsIndicator);
 		result.setSelfDescrPersonalityChar(userProfile.selfDescrPersonalityChar.toArray(
@@ -41,10 +42,10 @@ public class UserProfileMapper {
 				new String[userProfile.culturalOrFamilyNeeds.size()]));
 		result.setSocialMediaProfiles(userProfile.socialMediaProfiles.toArray(
 				new String[userProfile.socialMediaProfiles.size()]));
-		result.setAlfedAppInstalationDate(userProfile.alfedAppInstalationDate);
+		result.setAlfedAppInstalationDate(new Date(Long.parseLong(userProfile.alfedAppInstalationDate)));
 		result.setAlfredUserName(userProfile.alfredUserName);
 		result.setMobilityLevel(userProfile.mobilityLevel);
-		result.setLastUpdated(userProfile.lastUpdated);
+		result.setLastUpdated(new Date(Long.parseLong(userProfile.lastUpdated)));
 
 		return result;
 	}
@@ -58,7 +59,7 @@ public class UserProfileMapper {
 		userProfileRequest.lastName = userProfile.getLastName();
 		userProfileRequest.prefferedName = userProfile.getPrefferedName();
 		userProfileRequest.gender = userProfile.getGender();
-		userProfileRequest.dateOfBirth = userProfile.getDateOfBirth();
+		userProfileRequest.dateOfBirth = Long.toString(userProfile.getDateOfBirth().getTime());
 		userProfileRequest.phone = userProfile.getPhone();
 		userProfileRequest.mobilePhone = userProfile.getMobilePhone();
 		userProfileRequest.email = userProfile.getEmail();
@@ -73,17 +74,17 @@ public class UserProfileMapper {
 		userProfileRequest.employmentStatus = userProfile.getEmploymentStatus();
 		userProfileRequest.healthInsurance = userProfile.getHealthInsurance();
 		userProfileRequest.profession = userProfile.getProfession();
-		userProfileRequest.anniversaryDate = userProfile.getAnniversaryDate();
+		userProfileRequest.anniversaryDate = Long.toString(userProfile.getAnniversaryDate().getTime());
 		userProfileRequest.nextOfKin = userProfile.getNextOfKin();
 		userProfileRequest.myersBriggsIndicator = userProfile.getMyersBriggsIndicator();
 		userProfileRequest.selfDescrPersonalityChar = Arrays.asList(userProfile.getSelfDescrPersonalityChar());
 		userProfileRequest.interests = Arrays.asList(userProfile.getInterests());
 		userProfileRequest.culturalOrFamilyNeeds = Arrays.asList(userProfile.getCulturalOrFamilyNeeds());
 		userProfileRequest.socialMediaProfiles = Arrays.asList(userProfile.getSocialMediaProfiles());
-		userProfileRequest.alfedAppInstalationDate = userProfile.getAlfedAppInstalationDate();
+		userProfileRequest.alfedAppInstalationDate = Long.toString(userProfile.getAlfedAppInstalationDate().getTime());
 		userProfileRequest.alfredUserName = userProfile.getAlfredUserName();
 		userProfileRequest.mobilityLevel = userProfile.getMobilityLevel();
-		userProfileRequest.lastUpdated = userProfile.getLastUpdated();
+		userProfileRequest.lastUpdated = Long.toString(userProfile.getLastUpdated().getTime());
 
 		return userProfileRequest;
 	}

@@ -2,8 +2,6 @@ package eu.alfred.api.personalization.client;
 
 import com.google.gson.annotations.Expose;
 
-import java.util.Date;
-
 import eu.alfred.api.personalization.model.BloodType;
 import eu.alfred.api.personalization.model.HearingAcuityScale;
 import eu.alfred.api.personalization.model.LifestyleHealthRelated;
@@ -73,6 +71,6 @@ public class HealthProfileDto {
 	@Expose
 	public SocietyParticipationScale societyParticipationScore;
 	@Expose
-	public Date creationDate;
+	public String creationDate;
 
 }
