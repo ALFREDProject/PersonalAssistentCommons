@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -20,6 +21,8 @@ import eu.alfred.api.personalization.client.*;
 public class PersonalizationManager {
 
     private Messenger messenger;
+
+	private final static String TAG = "PMgr";
 
     private class PersonalizationSuccessResponse extends Handler {
         private PersonalizationResponse personalizationSuccessResponse;
@@ -55,7 +58,9 @@ public class PersonalizationManager {
                     JSONObject jsonResponse = null;
 
                     try {
-                        jsonResponse = new JSONObject(msg.getData().getString("JsonData", "{}"));
+	                    String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "{}");
+	                    Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
+                        jsonResponse = new JSONObject(json);
                         personalizationSuccessResponse.OnSuccess(jsonResponse);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -80,33 +85,22 @@ public class PersonalizationManager {
             switch (respCode) {
                 case PersonalizationConstants.CREATE_USER_PROFILE_FILTER_RESPONSE:
                 case PersonalizationConstants.CREATE_USER_PROFILE_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_CONTACTS_BY_CRITERIA_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_PROFILES_LAST_SYNC_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USER_PROFILE_RESPONSE:
                 case PersonalizationConstants.UPDATE_REQUESTER_RESPONSE:
                 case PersonalizationConstants.UPDATE_USER_CONTACT_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_PROFILES_BY_CRITERIA_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_REQUESTER_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USER_REQUESTER_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_CONTACTS_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_ID_RESPONSE:
-                case PersonalizationConstants.GET_UNSYNCHRONIZED_USER_PROFILES_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_ALL_USER_CONTACTS_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_GROUP_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_GROUPS_WITH_MEMBER_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_FILTERED_GROUPS_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USER_CONTACT_RESPONSE:
                 case PersonalizationConstants.RETRIEVE_USER_HEALTH_PROFILE_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_PROFILE_SENSORED_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USER_PROFILES_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_USERS_GROUPS_RESPONSE:
                 case PersonalizationConstants.UPDATE_GROUP_RESPONSE:
-                case PersonalizationConstants.RETRIEVE_ALL_GROUPS_RESPONSE:
 
-                    JSONArray jsonResponse = null;
+                    JSONObject jsonResponse = null;
 
                     try {
-                        jsonResponse = new JSONArray(msg.getData().getString("response"));
+	                    String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "{}");
+	                    Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
+                        jsonResponse = new JSONObject(json);
                         personalizationDataResponse.OnSuccess(jsonResponse);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -116,6 +110,47 @@ public class PersonalizationManager {
             }
         }
     }
+
+	private class PersonalizationDataListResponse extends Handler {
+		private PersonalizationResponse personalizationDataResponse;
+
+		public PersonalizationDataListResponse(PersonalizationResponse personalizationDataResponse) {
+			this.personalizationDataResponse = personalizationDataResponse;
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			int respCode = msg.what;
+
+			switch (respCode) {
+				case PersonalizationConstants.RETRIEVE_USER_CONTACTS_BY_CRITERIA_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_USER_PROFILES_LAST_SYNC_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_USER_PROFILES_BY_CRITERIA_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_USER_CONTACTS_RESPONSE:
+				case PersonalizationConstants.GET_UNSYNCHRONIZED_USER_PROFILES_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_ALL_USER_CONTACTS_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_GROUPS_WITH_MEMBER_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_FILTERED_GROUPS_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_USER_PROFILE_SENSORED_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_USER_PROFILES_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_USERS_GROUPS_RESPONSE:
+				case PersonalizationConstants.RETRIEVE_ALL_GROUPS_RESPONSE:
+
+					JSONArray jsonResponse = null;
+
+					try {
+						String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "{}");
+						Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
+						jsonResponse = new JSONArray(json);
+						personalizationDataResponse.OnSuccess(jsonResponse);
+					} catch (JSONException e) {
+						e.printStackTrace();
+						personalizationDataResponse.OnError(e);
+					}
+					break;
+			}
+		}
+	}
 
     public PersonalizationManager(Messenger messenger) {
         this.messenger = messenger;
@@ -171,7 +206,7 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILE_SENSORED);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
@@ -191,7 +226,7 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_PROFILES);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
@@ -252,7 +287,7 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.GET_UNSYNCHRONIZED_USER_PROFILES);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
@@ -296,7 +331,7 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_ALL_USER_CONTACTS);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
@@ -316,7 +351,7 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USER_CONTACTS);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
@@ -694,7 +729,7 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_USERS_GROUPS);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
@@ -714,7 +749,7 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_GROUPS_WITH_MEMBER);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
@@ -734,7 +769,7 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_FILTERED_GROUPS);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
 
@@ -754,7 +789,7 @@ public class PersonalizationManager {
             Message msg = Message.obtain(null, PersonalizationConstants.RETRIEVE_ALL_GROUPS);
 
             if (response != null)
-                msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
+                msg.replyTo = new Messenger(new PersonalizationDataListResponse(response));
 
             Bundle data = new Bundle();
             msg.setData(data);
