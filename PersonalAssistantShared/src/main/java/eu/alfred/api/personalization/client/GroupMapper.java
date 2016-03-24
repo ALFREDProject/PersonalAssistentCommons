@@ -1,5 +1,7 @@
 package eu.alfred.api.personalization.client;
 
+import java.util.Date;
+
 import eu.alfred.api.personalization.model.Group;
 
 
@@ -13,8 +15,8 @@ public class GroupMapper {
 		group.setMemberIds(groupDto.memberIds);
 		group.setName(groupDto.name);
 		group.setDescription(groupDto.description);
-		group.setCreationDate(groupDto.creationDate);
-		group.setLastUpdated(groupDto.lastUpdated);
+		group.setCreationDate(new Date(Long.parseLong(groupDto.creationDate)));
+		group.setLastUpdated(new Date(Long.parseLong(groupDto.lastUpdated)));
 
 		return group;
 	}
@@ -27,8 +29,8 @@ public class GroupMapper {
 		groupDto.memberIds = group.getMemberIds();
 		groupDto.name = group.getName();
 		groupDto.description = group.getDescription();
-		groupDto.creationDate = group.getCreationDate();
-		groupDto.lastUpdated = group.getLastUpdated();
+		groupDto.creationDate = Long.toString(group.getCreationDate().getTime());
+		groupDto.lastUpdated = Long.toString(group.getLastUpdated().getTime());
 
 		return groupDto;
 	}

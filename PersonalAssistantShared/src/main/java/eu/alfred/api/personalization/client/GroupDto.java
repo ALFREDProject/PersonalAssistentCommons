@@ -2,7 +2,6 @@ package eu.alfred.api.personalization.client;
 
 import com.google.gson.annotations.Expose;
 
-import java.util.Date;
 import java.util.Set;
 
 public class GroupDto {
@@ -18,8 +17,8 @@ public class GroupDto {
 	@Expose
 	public String description;
 	@Expose
-	public Date creationDate;
+	public String creationDate;
 	@Expose
-	public Date lastUpdated;
+	public String lastUpdated;
 
 }
