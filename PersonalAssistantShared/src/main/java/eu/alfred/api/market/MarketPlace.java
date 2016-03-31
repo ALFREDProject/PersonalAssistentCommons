@@ -543,7 +543,7 @@ public class MarketPlace {
 
     public void installBinary(long appId, String versionId, final InstallBinaryResponseListener listener) {
         if (messenger != null) {
-            Message msg = Message.obtain(null, MarketPlaceConstants.SET_TOKEN);
+            Message msg = Message.obtain(null, MarketPlaceConstants.INSTALL_BINARY);
 
             MarketplaceResponse marketplaceResponse = new MarketplaceResponse() {
                 @Override
@@ -557,7 +557,7 @@ public class MarketPlace {
                 @Override
                 public void OnSuccess(String binaryString) {
                     if (listener != null) {
-                        listener.onSuccess();
+                        listener.onSuccess(binaryString);
                     }
                 }
 

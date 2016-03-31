@@ -15,18 +15,14 @@ public class AppDetail {
     public String description;
     @Expose
     public List<String> screenshots = new ArrayList<String>();
-    @SerializedName("version_string")
     @Expose
     public String versionString;
-    @SerializedName("icon_url")
     @Expose
     public String iconUrl;
     @Expose
     public Float rating;
-    @SerializedName("promo_url")
     @Expose
     public String promoUrl;
-    @SerializedName("version_number")
     @Expose
     public Integer versionNumber;
     @Expose
@@ -49,7 +45,6 @@ public class AppDetail {
     public String author;
     @Expose
     public String externalUrl;
-    @SerializedName("version_id")
     @Expose
     public Integer versionId;
     @Expose
