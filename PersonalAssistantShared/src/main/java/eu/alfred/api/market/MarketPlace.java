@@ -8,10 +8,13 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import eu.alfred.api.market.device.DeviceUuidFactory;
+import eu.alfred.api.market.request.Changes;
 import eu.alfred.api.market.responses.MarketplaceResponse;
 import eu.alfred.api.market.responses.app_rate.AppRateList;
 import eu.alfred.api.market.responses.apps.AppDetail;
@@ -24,14 +27,17 @@ import eu.alfred.api.market.responses.listener.GetAppListResponseListener;
 import eu.alfred.api.market.responses.listener.GetAppRateListResponseListener;
 import eu.alfred.api.market.responses.listener.GetCategoryListResponseListener;
 import eu.alfred.api.market.responses.listener.GetCountryListResponseListener;
+import eu.alfred.api.market.responses.listener.GetInstalledAppsResponseListener;
 import eu.alfred.api.market.responses.listener.GetLanguageListResponseListener;
 import eu.alfred.api.market.responses.listener.InstallBinaryResponseListener;
 import eu.alfred.api.market.responses.listener.LoginResponseListener;
 import eu.alfred.api.market.responses.listener.SetAppRateResponseListener;
+import eu.alfred.api.market.responses.listener.SetInstalledAppsResponseListener;
 import eu.alfred.api.market.responses.listener.SetTokenResponseListener;
 import eu.alfred.api.market.responses.login.User;
 import eu.alfred.api.market.responses.push.SetTokenResponse;
 import eu.alfred.api.market.responses.set_app_rate.SetAppRateResponse;
+import eu.alfred.api.market.responses.set_installed_apps.Datum;
 
 /**
  * Created by Gary on 03.03.2016.
@@ -41,56 +47,9 @@ public class MarketPlace {
     private Messenger messenger;
     private Context context;
 
-    private class MarketPlaceDataResponse extends Handler {
-        private MarketplaceResponse marketplaceDataResponse;
-
-        public MarketPlaceDataResponse(MarketplaceResponse marketplaceDataResponse) {
-            this.marketplaceDataResponse = marketplaceDataResponse;
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            int respCode = msg.what;
-
-            switch (respCode) {
-                case MarketPlaceConstants.GET_APP_DETAIL_RESPONSE:
-                    handleResponse(msg, marketplaceDataResponse);
-                    break;
-                case MarketPlaceConstants.GET_APP_LIST_RESPONSE:
-                    handleResponse(msg, marketplaceDataResponse);
-                    break;
-                case MarketPlaceConstants.GET_APP_RATE_LIST_RESPONSE:
-                    handleResponse(msg, marketplaceDataResponse);
-                    break;
-                case MarketPlaceConstants.GET_CATEGORY_LIST_RESPONSE:
-                    handleResponse(msg, marketplaceDataResponse);
-                    break;
-                case MarketPlaceConstants.GET_COUNTRY_LIST_RESPONSE:
-                    handleResponse(msg, marketplaceDataResponse);
-                    break;
-                case MarketPlaceConstants.GET_LANGUAGE_LIST_RESPONSE:
-                    handleResponse(msg, marketplaceDataResponse);
-                    break;
-                case MarketPlaceConstants.LOGIN_RESPONSE:
-                    handleResponse(msg, marketplaceDataResponse);
-                    break;
-                case MarketPlaceConstants.AUTO_LOGIN_RESPONSE:
-                    handleResponse(msg, marketplaceDataResponse);
-                    break;
-                case MarketPlaceConstants.SET_APP_RATE_RESPONSE:
-                    handleResponse(msg, marketplaceDataResponse);
-                    break;
-                case MarketPlaceConstants.SET_INSTALLED_APPS_RESPONSE:
-                    handleResponse(msg, marketplaceDataResponse);
-                    break;
-                case MarketPlaceConstants.SET_TOKEN_RESPONSE:
-                    handleResponse(msg, marketplaceDataResponse);
-                    break;
-                case MarketPlaceConstants.INSTALL_BINARY_RESPONSE:
-                    handleResponse(msg, marketplaceDataResponse);
-                    break;
-            }
-        }
+    public MarketPlace(Messenger messenger, Context context) {
+        this.messenger = messenger;
+        this.context = context;
     }
 
     private void handleResponse(Message msg, MarketplaceResponse marketplaceDataResponse) {
@@ -104,13 +63,6 @@ public class MarketPlace {
             marketplaceDataResponse.OnError(e);
         }
     }
-
-
-    public MarketPlace(Messenger messenger, Context context) {
-        this.messenger = messenger;
-        this.context = context;
-    }
-
 
     public void login(String user, String password, final LoginResponseListener listener) {
         if (messenger != null) {
@@ -285,7 +237,6 @@ public class MarketPlace {
             }
         }
     }
-
 
     public void getAppDetails(String id, final GetAppDetailsResponseListener listener) {
         if (messenger != null) {
@@ -500,6 +451,47 @@ public class MarketPlace {
         }
     }
 
+    public void setInstalledApps(Changes changes, final SetInstalledAppsResponseListener listener) {
+        if (messenger != null) {
+            Message msg = Message.obtain(null, MarketPlaceConstants.SET_INSTALLED_APPS);
+
+            MarketplaceResponse marketplaceResponse = new MarketplaceResponse() {
+                @Override
+                public void OnSuccess(JSONObject response) {
+                }
+
+                @Override
+                public void OnSuccess(JSONArray response) {
+                }
+
+                @Override
+                public void OnSuccess(String response) {
+                    Datum datum = Datum.fromJson(response);
+                    if (listener != null) {
+                        listener.onSuccess(datum);
+                    }
+                }
+
+                @Override
+                public void OnError(Exception exception) {
+                    if (listener != null) {
+                        listener.onError(exception);
+                    }
+                }
+            };
+            msg.replyTo = new Messenger(new MarketPlaceDataResponse(marketplaceResponse));
+
+            Bundle data = new Bundle();
+            data.putString("p_changes_json", new Gson().toJson(changes));
+            msg.setData(data);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void setToken(String token, final SetTokenResponseListener listener) {
         if (messenger != null) {
             Message msg = Message.obtain(null, MarketPlaceConstants.SET_TOKEN);
@@ -578,6 +570,58 @@ public class MarketPlace {
                 messenger.send(msg);
             } catch (RemoteException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private class MarketPlaceDataResponse extends Handler {
+        private MarketplaceResponse marketplaceDataResponse;
+
+        public MarketPlaceDataResponse(MarketplaceResponse marketplaceDataResponse) {
+            this.marketplaceDataResponse = marketplaceDataResponse;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            int respCode = msg.what;
+
+            switch (respCode) {
+                case MarketPlaceConstants.GET_APP_DETAIL_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
+                case MarketPlaceConstants.GET_APP_LIST_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
+                case MarketPlaceConstants.GET_APP_RATE_LIST_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
+                case MarketPlaceConstants.GET_CATEGORY_LIST_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
+                case MarketPlaceConstants.GET_COUNTRY_LIST_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
+                case MarketPlaceConstants.GET_LANGUAGE_LIST_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
+                case MarketPlaceConstants.LOGIN_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
+                case MarketPlaceConstants.AUTO_LOGIN_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
+                case MarketPlaceConstants.SET_APP_RATE_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
+                case MarketPlaceConstants.SET_INSTALLED_APPS_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
+                case MarketPlaceConstants.SET_TOKEN_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
+                case MarketPlaceConstants.INSTALL_BINARY_RESPONSE:
+                    handleResponse(msg, marketplaceDataResponse);
+                    break;
             }
         }
     }
