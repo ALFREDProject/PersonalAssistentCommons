@@ -14,7 +14,6 @@ public class MarketPlaceConstants {
   public static final int SET_INSTALLED_APPS = 857910010;
   public static final int SET_TOKEN = 857910011;
   public static final int INSTALL_BINARY = 857910012;
-  public static final int GET_INSTALLED_APPS = 857910013;
 
   public static final int GET_APP_DETAIL_RESPONSE = 867910001;
   public static final int GET_APP_LIST_RESPONSE = 867910002;
@@ -28,7 +27,6 @@ public class MarketPlaceConstants {
   public static final int SET_INSTALLED_APPS_RESPONSE = 867910010;
   public static final int SET_TOKEN_RESPONSE = 867910011;
   public static final int INSTALL_BINARY_RESPONSE = 867910012;
-  public static final int GET_INSTALLED_APPS_RESPONSE = 867910013;
 
   public static final String EXTRAS_JSON = "json";
 }
