@@ -69,7 +69,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
                 Messenger msg = personalAssistant.getMessenger();
                 cade = new Cade(msg);
                 gameManager = new GameManager(msg);
-                marketPlace = new MarketPlace(msg);
+                marketPlace = new MarketPlace(msg, getApplicationContext());
                 safFacade = new SAFDataFacade(msg);
                 cloudStorage = new CloudStorage(msg);
                 personalizationManager = new PersonalizationManager(msg);
