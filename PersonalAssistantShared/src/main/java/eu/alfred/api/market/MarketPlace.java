@@ -111,8 +111,11 @@ public class MarketPlace {
             msg.setData(data);
             try {
                 messenger.send(msg);
-            } catch (RemoteException e) {
+            } catch (Exception e){
                 e.printStackTrace();
+                if (listener != null) {
+                    listener.onError(e);
+                }
             }
         }
     }
@@ -151,8 +154,11 @@ public class MarketPlace {
             msg.setData(data);
             try {
                 messenger.send(msg);
-            } catch (RemoteException e) {
+            } catch (Exception e){
                 e.printStackTrace();
+                if (listener != null) {
+                    listener.onError(e);
+                }
             }
         }
     }
@@ -191,8 +197,11 @@ public class MarketPlace {
             msg.setData(data);
             try {
                 messenger.send(msg);
-            } catch (RemoteException e) {
+            } catch (Exception e){
                 e.printStackTrace();
+                if (listener != null) {
+                    listener.onError(e);
+                }
             }
         }
     }
@@ -231,8 +240,11 @@ public class MarketPlace {
             msg.setData(data);
             try {
                 messenger.send(msg);
-            } catch (RemoteException e) {
+            } catch (Exception e){
                 e.printStackTrace();
+                if (listener != null) {
+                    listener.onError(e);
+                }
             }
         }
     }
@@ -276,8 +288,11 @@ public class MarketPlace {
             msg.setData(data);
             try {
                 messenger.send(msg);
-            } catch (RemoteException e) {
+            } catch (Exception e){
                 e.printStackTrace();
+                if (listener != null) {
+                    listener.onError(e);
+                }
             }
         }
     }
@@ -345,8 +360,11 @@ public class MarketPlace {
             msg.setData(data);
             try {
                 messenger.send(msg);
-            } catch (RemoteException e) {
+            } catch (Exception e){
                 e.printStackTrace();
+                if (listener != null) {
+                    listener.onError(e);
+                }
             }
         }
     }
@@ -392,8 +410,11 @@ public class MarketPlace {
             msg.setData(data);
             try {
                 messenger.send(msg);
-            } catch (RemoteException e) {
+            } catch (Exception e){
                 e.printStackTrace();
+                if (listener != null) {
+                    listener.onError(e);
+                }
             }
         }
     }
@@ -444,8 +465,11 @@ public class MarketPlace {
             msg.setData(data);
             try {
                 messenger.send(msg);
-            } catch (RemoteException e) {
+            } catch (Exception e){
                 e.printStackTrace();
+                if (listener != null) {
+                    listener.onError(e);
+                }
             }
         }
     }
@@ -485,8 +509,11 @@ public class MarketPlace {
             msg.setData(data);
             try {
                 messenger.send(msg);
-            } catch (RemoteException e) {
+            } catch (Exception e){
                 e.printStackTrace();
+                if (listener != null) {
+                    listener.onError(e);
+                }
             }
         }
     }
@@ -526,8 +553,11 @@ public class MarketPlace {
             msg.setData(data);
             try {
                 messenger.send(msg);
-            } catch (RemoteException e) {
+            } catch (Exception e){
                 e.printStackTrace();
+                if (listener != null) {
+                    listener.onError(e);
+                }
             }
         }
     }
@@ -567,8 +597,11 @@ public class MarketPlace {
             msg.setData(data);
             try {
                 messenger.send(msg);
-            } catch (RemoteException e) {
+            } catch (Exception e){
                 e.printStackTrace();
+                if (listener != null) {
+                    listener.onError(e);
+                }
             }
         }
     }
