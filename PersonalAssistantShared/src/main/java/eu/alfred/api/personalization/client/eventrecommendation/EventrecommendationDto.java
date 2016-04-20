@@ -13,3 +13,16 @@ public class EventrecommendationDto {
     @Expose
     public HashMap<Event,Integer> id;
 }
+
+                            //Not needed at the moment - maybe in the future?!
+                            /*  Log.Instance.Info("Checking settings.... ");
+                              if (Settings.Instance.MonitoredDirectories == null || Settings.Instance.TutorialDone == false || Settings.Instance.MonitoredDirectories.Count == 0)
+                              {
+                                  Log.Instance.Info("Tutorial started");
+                                  var mainWindow = new Tutorial();
+                                  Current.MainWindow = mainWindow;
+                                  mainWindow.Show();
+                                  Log.Instance.Info("Tutorial Done");
+                              }
+                              else
+                              {*/
