@@ -1,7 +1,9 @@
 package eu.alfred.api.personalization.client;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import eu.alfred.api.personalization.model.UserProfile;
 
@@ -59,7 +61,7 @@ public class UserProfileMapper {
 		userProfileRequest.lastName = userProfile.getLastName();
 		userProfileRequest.prefferedName = userProfile.getPrefferedName();
 		userProfileRequest.gender = userProfile.getGender();
-		userProfileRequest.dateOfBirth = Long.toString(userProfile.getDateOfBirth().getTime());
+		userProfileRequest.dateOfBirth = time(userProfile.getDateOfBirth());
 		userProfileRequest.phone = userProfile.getPhone();
 		userProfileRequest.mobilePhone = userProfile.getMobilePhone();
 		userProfileRequest.email = userProfile.getEmail();
@@ -74,18 +76,28 @@ public class UserProfileMapper {
 		userProfileRequest.employmentStatus = userProfile.getEmploymentStatus();
 		userProfileRequest.healthInsurance = userProfile.getHealthInsurance();
 		userProfileRequest.profession = userProfile.getProfession();
-		userProfileRequest.anniversaryDate = Long.toString(userProfile.getAnniversaryDate().getTime());
+		userProfileRequest.anniversaryDate = time(userProfile.getAnniversaryDate());
 		userProfileRequest.nextOfKin = userProfile.getNextOfKin();
 		userProfileRequest.myersBriggsIndicator = userProfile.getMyersBriggsIndicator();
-		userProfileRequest.selfDescrPersonalityChar = Arrays.asList(userProfile.getSelfDescrPersonalityChar());
-		userProfileRequest.interests = Arrays.asList(userProfile.getInterests());
-		userProfileRequest.culturalOrFamilyNeeds = Arrays.asList(userProfile.getCulturalOrFamilyNeeds());
-		userProfileRequest.socialMediaProfiles = Arrays.asList(userProfile.getSocialMediaProfiles());
-		userProfileRequest.alfedAppInstalationDate = Long.toString(userProfile.getAlfedAppInstalationDate().getTime());
+		userProfileRequest.selfDescrPersonalityChar = list(userProfile.getSelfDescrPersonalityChar());
+		userProfileRequest.interests = list(userProfile.getInterests());
+		userProfileRequest.culturalOrFamilyNeeds = list(userProfile.getCulturalOrFamilyNeeds());
+		userProfileRequest.socialMediaProfiles = list(userProfile.getSocialMediaProfiles());
+		userProfileRequest.alfedAppInstalationDate = time(userProfile.getAlfedAppInstalationDate());
 		userProfileRequest.alfredUserName = userProfile.getAlfredUserName();
 		userProfileRequest.mobilityLevel = userProfile.getMobilityLevel();
-		userProfileRequest.lastUpdated = Long.toString(userProfile.getLastUpdated().getTime());
+		userProfileRequest.lastUpdated = time(userProfile.getLastUpdated());
 
 		return userProfileRequest;
+	}
+
+	private static List<String> list(String [] array) {
+		if (array == null) return new ArrayList<String>();
+		return Arrays.asList(array);
+	}
+
+	private static String time(Date date) {
+		if (date == null) return "0";
+		return Long.toString(date.getTime());
 	}
 }

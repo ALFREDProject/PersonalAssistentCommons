@@ -29,9 +29,15 @@ public class GroupMapper {
 		groupDto.memberIds = group.getMemberIds();
 		groupDto.name = group.getName();
 		groupDto.description = group.getDescription();
-		groupDto.creationDate = Long.toString(group.getCreationDate().getTime());
-		groupDto.lastUpdated = Long.toString(group.getLastUpdated().getTime());
+		groupDto.creationDate = time(group.getCreationDate());
+		groupDto.lastUpdated = time(group.getLastUpdated());
 
 		return groupDto;
 	}
+
+	private static String time(Date date) {
+		if (date == null) return "0";
+		return Long.toString(date.getTime());
+	}
+
 }

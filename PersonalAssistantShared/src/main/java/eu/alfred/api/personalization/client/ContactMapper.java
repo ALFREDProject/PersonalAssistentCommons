@@ -44,7 +44,7 @@ public class ContactMapper {
 		contactRequest.lastName = contact.getLastName();
 		contactRequest.prefferedName = contact.getPrefferedName();
 		contactRequest.gender = contact.getGender();
-		contactRequest.dateOfBirth = Long.toString(contact.getDateOfBirth().getTime());
+		contactRequest.dateOfBirth = time(contact.getDateOfBirth());
 		contactRequest.phone = contact.getPhone();
 		contactRequest.mobilePhone = contact.getMobilePhone();
 		contactRequest.email = contact.getEmail();
@@ -57,4 +57,10 @@ public class ContactMapper {
 
 		return contactRequest;
 	}
+
+	private static String time(Date date) {
+		if (date == null) return "0";
+		return Long.toString(date.getTime());
+	}
+
 }
