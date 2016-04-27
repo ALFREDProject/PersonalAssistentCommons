@@ -15,8 +15,8 @@ public class GroupMapper {
 		group.setMemberIds(groupDto.memberIds);
 		group.setName(groupDto.name);
 		group.setDescription(groupDto.description);
-		group.setCreationDate(new Date(Long.parseLong(groupDto.creationDate)));
-		group.setLastUpdated(new Date(Long.parseLong(groupDto.lastUpdated)));
+		group.setCreationDate(date(groupDto.creationDate));
+		group.setLastUpdated(date(groupDto.lastUpdated));
 
 		return group;
 	}
@@ -40,4 +40,15 @@ public class GroupMapper {
 		return Long.toString(date.getTime());
 	}
 
+	private static Date date(String time) {
+		if (time == null) return null;
+		long tl = 0L;
+		try {
+			tl = Long.parseLong(time);
+		}
+		catch (NumberFormatException e) {
+			return null;
+		}
+		return new Date(tl);
+	}
 }

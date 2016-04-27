@@ -40,7 +40,7 @@ public class HealthProfileMapper {
 		profile.setBodyTemperatureAtRest((float)profileRequest.bodyTemperatureAtRest);
 		profile.setLifestyleHealthRelated(profileRequest.lifestyleHealthRelated);
 		profile.setSocietyParticipationScore(profileRequest.societyParticipationScore);
-		profile.setCreationDate(new Date(Long.parseLong(profileRequest.creationDate)));
+		profile.setCreationDate(date(profileRequest.creationDate));
 
 		return profile;
 	}
@@ -88,4 +88,15 @@ public class HealthProfileMapper {
 		return Long.toString(date.getTime());
 	}
 
+	private static Date date(String time) {
+		if (time == null) return null;
+		long tl = 0L;
+		try {
+			tl = Long.parseLong(time);
+		}
+		catch (NumberFormatException e) {
+			return null;
+		}
+		return new Date(tl);
+	}
 }

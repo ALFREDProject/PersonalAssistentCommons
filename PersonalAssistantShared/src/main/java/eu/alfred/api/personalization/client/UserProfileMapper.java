@@ -18,11 +18,7 @@ public class UserProfileMapper {
 		result.setLastName(userProfile.lastName);
 		result.setPrefferedName(userProfile.prefferedName);
 		result.setGender(userProfile.gender);
-		if(userProfile.dateOfBirth!=null) {
-			result.setDateOfBirth(new Date(Long.parseLong(userProfile.dateOfBirth)));
-		} else {
-			result.setDateOfBirth(new Date());
-		}
+		result.setDateOfBirth(date(userProfile.dateOfBirth));
 		result.setPhone(userProfile.phone);
 		result.setMobilePhone(userProfile.mobilePhone);
 		result.setEmail(userProfile.email);
@@ -37,49 +33,17 @@ public class UserProfileMapper {
 		result.setEmploymentStatus(userProfile.employmentStatus);
 		result.setHealthInsurance(userProfile.healthInsurance);
 		result.setProfession(userProfile.profession);
-		if(userProfile.anniversaryDate!=null) {
-			result.setAnniversaryDate(new Date(Long.parseLong(userProfile.anniversaryDate)));
-		} else {
-			result.setAnniversaryDate(new Date());
-		}
+		result.setAnniversaryDate(date(userProfile.anniversaryDate));
 		result.setNextOfKin(userProfile.nextOfKin);
 		result.setMyersBriggsIndicator(userProfile.myersBriggsIndicator);
-		if(userProfile.selfDescrPersonalityChar!=null) {
-			result.setSelfDescrPersonalityChar(userProfile.selfDescrPersonalityChar.toArray(
-					new String[userProfile.selfDescrPersonalityChar.size()]));
-		} else {
-			result.setSelfDescrPersonalityChar(new String[0]);
-		}
-		if(userProfile.interests!=null) {
-			result.setInterests(userProfile.interests.toArray(
-					new String[userProfile.interests.size()]));
-		} else {
-			result.setInterests(new String[0]);
-		}
-		if(userProfile.culturalOrFamilyNeeds!=null) {
-			result.setCulturalOrFamilyNeeds(userProfile.culturalOrFamilyNeeds.toArray(
-					new String[userProfile.culturalOrFamilyNeeds.size()]));
-		} else {
-			result.setCulturalOrFamilyNeeds(new String[0]);
-		}
-		if(userProfile.socialMediaProfiles!=null) {
-			result.setSocialMediaProfiles(userProfile.socialMediaProfiles.toArray(
-					new String[userProfile.socialMediaProfiles.size()]));
-		} else {
-			result.setSocialMediaProfiles(new String[0]);
-		}
-		if(userProfile.alfedAppInstalationDate!=null) {
-			result.setAlfedAppInstalationDate(new Date(Long.parseLong(userProfile.alfedAppInstalationDate)));
-		} else {
-			result.setAlfedAppInstalationDate(new Date());
-		}
-		if(userProfile.lastUpdated!=null) {
-			result.setLastUpdated(new Date(Long.parseLong(userProfile.lastUpdated)));
-		} else {
-			result.setLastUpdated(new Date());
-		}
+		result.setSelfDescrPersonalityChar(list(userProfile.selfDescrPersonalityChar));
+		result.setInterests(list(userProfile.interests));
+		result.setCulturalOrFamilyNeeds(list(userProfile.culturalOrFamilyNeeds));
+		result.setSocialMediaProfiles(list(userProfile.socialMediaProfiles));
+		result.setAlfedAppInstalationDate(date(userProfile.alfedAppInstalationDate));
 		result.setAlfredUserName(userProfile.alfredUserName);
 		result.setMobilityLevel(userProfile.mobilityLevel);
+		result.setLastUpdated(date(userProfile.lastUpdated));
 
 		return result;
 	}
@@ -128,8 +92,25 @@ public class UserProfileMapper {
 		return Arrays.asList(array);
 	}
 
+	private static String[] list(List<String> list) {
+		if (list == null) return new String[0];
+		return list.toArray(new String[list.size()]);
+	}
+
 	private static String time(Date date) {
 		if (date == null) return "0";
 		return Long.toString(date.getTime());
+	}
+
+	private static Date date(String time) {
+		if (time == null) return null;
+		long tl = 0L;
+		try {
+			tl = Long.parseLong(time);
+		}
+		catch (NumberFormatException e) {
+			return null;
+		}
+		return new Date(tl);
 	}
 }

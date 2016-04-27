@@ -18,11 +18,7 @@ public class ContactMapper {
 		contact.setLastName(contactDto.lastName);
 		contact.setPrefferedName(contactDto.prefferedName);
 		contact.setGender(contactDto.gender);
-		if(contactDto.dateOfBirth!=null) {
-			contact.setDateOfBirth(new Date(Long.parseLong(contactDto.dateOfBirth)));
-		} else {
-			contact.setDateOfBirth(new Date());
-		}
+		contact.setDateOfBirth(date(contactDto.dateOfBirth));
 		contact.setPhone(contactDto.phone);
 		contact.setMobilePhone(contactDto.mobilePhone);
 		contact.setEmail(contactDto.email);
@@ -67,4 +63,15 @@ public class ContactMapper {
 		return Long.toString(date.getTime());
 	}
 
+	private static Date date(String time) {
+		if (time == null) return null;
+		long tl = 0L;
+		try {
+			tl = Long.parseLong(time);
+		}
+		catch (NumberFormatException e) {
+			return null;
+		}
+		return new Date(tl);
+	}
 }
