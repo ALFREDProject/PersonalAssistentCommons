@@ -20,6 +20,7 @@ import eu.alfred.api.personalization.webservice.PersonalizationConstants;
 /**
  * Created by thardes on 19/04/2016.
  */
+@Deprecated
 public class Eventrecommendation {
     private Messenger messenger;
 

@@ -18,6 +18,7 @@ import eu.alfred.api.PersonalAssistantConnection;
 import eu.alfred.api.gamemanager.GameManager;
 import eu.alfred.api.market.MarketPlace;
 import eu.alfred.api.personalization.webservice.PersonalizationManager;
+import eu.alfred.api.personalization.webservice.eventrecommendation.EventrecommendationManager;
 import eu.alfred.api.proxies.interfaces.ICadeCommand;
 import eu.alfred.api.sensors.SAFDataFacade;
 import eu.alfred.api.speech.Cade;
@@ -36,6 +37,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
     public GameManager gameManager;
     public MarketPlace marketPlace;
     public SAFDataFacade safFacade;
+    public EventrecommendationManager eventrecommendationManager;
     public CloudStorage cloudStorage;
     public PersonalizationManager personalizationManager;
 
@@ -72,6 +74,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
                 marketPlace = new MarketPlace(msg, getApplicationContext());
                 safFacade = new SAFDataFacade(msg);
                 cloudStorage = new CloudStorage(msg);
+                eventrecommendationManager = new EventrecommendationManager(msg);
                 personalizationManager = new PersonalizationManager(msg);
                 onNewIntent(getIntent());
             }
