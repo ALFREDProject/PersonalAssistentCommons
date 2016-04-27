@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Messenger;
 import android.support.v4.app.FragmentActivity;
@@ -17,10 +16,9 @@ import java.util.HashMap;
 import eu.alfred.api.PersonalAssistant;
 import eu.alfred.api.PersonalAssistantConnection;
 import eu.alfred.api.gamemanager.GameManager;
-import eu.alfred.api.globalSettings.GlobalSettings;
-import eu.alfred.api.globalSettings.responses.GlobalSettingsResponse;
 import eu.alfred.api.market.MarketPlace;
 import eu.alfred.api.personalization.webservice.PersonalizationManager;
+import eu.alfred.api.personalization.webservice.eventrecommendation.EventrecommendationManager;
 import eu.alfred.api.proxies.interfaces.ICadeCommand;
 import eu.alfred.api.sensors.SAFDataFacade;
 import eu.alfred.api.speech.Cade;
@@ -39,10 +37,9 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
     public GameManager gameManager;
     public MarketPlace marketPlace;
     public SAFDataFacade safFacade;
+    public EventrecommendationManager eventrecommendationManager;
     public CloudStorage cloudStorage;
     public PersonalizationManager personalizationManager;
-    public GlobalSettings globalSettings;
-    SharedPreferences prefs;
 
     public CircleButton circleButton;
 
@@ -57,7 +54,6 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
         @Override
         public void onReceive(Context context, Intent intent) {
             circleButton.MakeBlue();
-            circleButton.setIsActive(false);
         }
     };
 
@@ -72,36 +68,15 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
         personalAssistant.setOnPersonalAssistantConnectionListener(new PersonalAssistantConnection() {
             @Override
             public void OnConnected() {
-                final Messenger msg = personalAssistant.getMessenger();
-                globalSettings = new GlobalSettings(msg, AppActivity.this);
-                globalSettings.getGlobalSettings(new GlobalSettingsResponse() {
-                    @Override
-                    public void OnSuccess(HashMap<String, Object> response) {
-                        prefs = getSharedPreferences("global_settings", Context.MODE_PRIVATE);
-                        if (response != null) {
-                            SharedPreferences.Editor prefEditor = prefs.edit();
-                            prefEditor.putString("pref_mircophone_color", (String) response.get("pref_mircophone_color"));
-                            prefEditor.putBoolean("pref_useHardwareButton", (Boolean) response.get("pref_useHardwareButton"));
-                            prefEditor.putString("pref_PhysicalHardwareButton", (String) response.get("pref_PhysicalHardwareButton"));
-                            prefEditor.putString("pref_language", (String) response.get("pref_language"));
-                            prefEditor.putString("pref_CADEUrl", (String) response.get("pref_CADEUrl"));
-                            prefEditor.commit();
-                            circleButton.setColor(prefs.getString("pref_mircophone_color", "blue"), AppActivity.this);
-                        }
-                        cade = new Cade(msg);
-                        gameManager = new GameManager(msg);
-                        marketPlace = new MarketPlace(msg, getApplicationContext());
-                        safFacade = new SAFDataFacade(msg);
-                        cloudStorage = new CloudStorage(msg);
-                        personalizationManager = new PersonalizationManager(msg);
-                        onNewIntent(getIntent());
-                    }
-
-                    @Override
-                    public void OnError(Exception exception) {
-                        Log.e(exception.toString(), exception.getMessage());
-                    }
-                });
+                Messenger msg = personalAssistant.getMessenger();
+                cade = new Cade(msg);
+                gameManager = new GameManager(msg);
+                marketPlace = new MarketPlace(msg, getApplicationContext());
+                safFacade = new SAFDataFacade(msg);
+                cloudStorage = new CloudStorage(msg);
+                eventrecommendationManager = new EventrecommendationManager(msg);
+                personalizationManager = new PersonalizationManager(msg);
+                onNewIntent(getIntent());
             }
 
             @Override
