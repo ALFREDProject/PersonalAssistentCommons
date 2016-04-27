@@ -18,7 +18,11 @@ public class ContactMapper {
 		contact.setLastName(contactDto.lastName);
 		contact.setPrefferedName(contactDto.prefferedName);
 		contact.setGender(contactDto.gender);
-		contact.setDateOfBirth(new Date(Long.parseLong(contactDto.dateOfBirth)));
+		if(contactDto.dateOfBirth!=null) {
+			contact.setDateOfBirth(new Date(Long.parseLong(contactDto.dateOfBirth)));
+		} else {
+			contact.setDateOfBirth(new Date());
+		}
 		contact.setPhone(contactDto.phone);
 		contact.setMobilePhone(contactDto.mobilePhone);
 		contact.setEmail(contactDto.email);

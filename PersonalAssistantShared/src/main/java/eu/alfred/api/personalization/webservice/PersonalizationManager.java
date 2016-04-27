@@ -8,14 +8,32 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import eu.alfred.api.personalization.model.*;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+import eu.alfred.api.personalization.client.ContactDto;
+import eu.alfred.api.personalization.client.ContactMapper;
+import eu.alfred.api.personalization.client.GroupDto;
+import eu.alfred.api.personalization.client.GroupMapper;
+import eu.alfred.api.personalization.client.HealthProfileDto;
+import eu.alfred.api.personalization.client.HealthProfileMapper;
+import eu.alfred.api.personalization.client.RequesterDto;
+import eu.alfred.api.personalization.client.RequesterMapper;
+import eu.alfred.api.personalization.client.UserProfileDto;
+import eu.alfred.api.personalization.client.UserProfileMapper;
+import eu.alfred.api.personalization.model.Contact;
+import eu.alfred.api.personalization.model.Group;
+import eu.alfred.api.personalization.model.HealthProfile;
+import eu.alfred.api.personalization.model.Requester;
+import eu.alfred.api.personalization.model.UserProfile;
 import eu.alfred.api.personalization.responses.PersonalizationResponse;
-import eu.alfred.api.personalization.client.*;
 
 
 public class PersonalizationManager {
@@ -119,12 +137,29 @@ public class PersonalizationManager {
 			int respCode = msg.what;
 
 			switch (respCode) {
+                case PersonalizationConstants.RETRIEVE_ALL_USER_CONTACTS_RESPONSE:
+                    try {
+                        String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "[]");
+                        Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
+                        List<Contact> profiles = new ArrayList<>();
+                        JSONArray jsonResponse = new JSONArray(json);
+                        for(int i = 0; i < jsonResponse.length(); i++) {
+                            Type type = new TypeToken<ContactDto>() {}.getType();
+                            ContactDto dto = new Gson().fromJson(jsonResponse.getJSONObject(i).toString(), type);
+                            Contact up = ContactMapper.toModel(dto);
+                            profiles.add(up);
+                        }
+                        personalizationDataResponse.OnSuccess(profiles);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        personalizationDataResponse.OnError(e);
+                    }
+
 				case PersonalizationConstants.RETRIEVE_USER_CONTACTS_BY_CRITERIA_RESPONSE:
 				case PersonalizationConstants.RETRIEVE_USER_PROFILES_LAST_SYNC_RESPONSE:
 				case PersonalizationConstants.RETRIEVE_USER_PROFILES_BY_CRITERIA_RESPONSE:
 				case PersonalizationConstants.RETRIEVE_USER_CONTACTS_RESPONSE:
 				case PersonalizationConstants.GET_UNSYNCHRONIZED_USER_PROFILES_RESPONSE:
-				case PersonalizationConstants.RETRIEVE_ALL_USER_CONTACTS_RESPONSE:
 				case PersonalizationConstants.RETRIEVE_GROUPS_WITH_MEMBER_RESPONSE:
 				case PersonalizationConstants.RETRIEVE_FILTERED_GROUPS_RESPONSE:
 				case PersonalizationConstants.RETRIEVE_USER_PROFILE_SENSORED_RESPONSE:
@@ -135,7 +170,7 @@ public class PersonalizationManager {
 					JSONArray jsonResponse = null;
 
 					try {
-						String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "{}");
+						String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "[{}]");
 						Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
 						jsonResponse = new JSONArray(json);
 						personalizationDataResponse.OnSuccess(jsonResponse);

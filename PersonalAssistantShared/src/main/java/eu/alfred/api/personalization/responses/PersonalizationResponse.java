@@ -9,6 +9,7 @@ import org.json.JSONObject;
 public interface PersonalizationResponse {
     public void OnSuccess(JSONObject response);
     public void OnSuccess(JSONArray response);
+    public void OnSuccess(Object response);
     public void OnSuccess(String response);
     public void OnError(Exception exception);
 }

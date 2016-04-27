@@ -90,6 +90,21 @@ public class Cade {
         }
     }
 
+    public void SetLanguage(String url) {
+        Bundle bundle = new Bundle();
+        bundle.putString("CADE_BACKEND_URL", url);
+
+        if (messenger != null) {
+            Message msg = Message.obtain(null, CadeConstants.SET_CADE_BACKEND_URL);
+            msg.setData(bundle);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void GetCadeBackendUrl(CadeResponse cadeResponse) {
         if (messenger != null) {
             Message msg = Message.obtain(null, CadeConstants.GET_CADE_BACKEND_URL);
