@@ -1,13 +1,18 @@
 package eu.alfred.api.personalization.model.eventrecommendation;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.EnumSet;
 
 /**
  * Created by thardes on 27/04/2016.
  */
 public class EventRecommendationResponse {
+    @SerializedName("event")
     private Event event;
+    @SerializedName("reasons")
     private EnumSet<RecommendationReason> reasons;
+    @SerializedName("weight")
     private int weight;
 
     public EventRecommendationResponse(Event event, EnumSet<RecommendationReason> reasons, int weight)

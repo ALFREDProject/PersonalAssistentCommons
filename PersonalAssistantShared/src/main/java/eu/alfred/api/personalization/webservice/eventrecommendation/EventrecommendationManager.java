@@ -103,19 +103,10 @@ public class EventrecommendationManager implements IEventRecommendationCommand {
             int respCode = msg.what;
             switch (respCode) {
                 case EventrecommendationConstants.GET_RECOMMENDATIONS:
-
-                    JSONObject jsonResponse = null;
-
-                  //  try {
-                        Log.i("EvenrecManagerData", "Try to get the json stuff");
-                        String result = msg.getData().getString("result");//Needs to be the same as in    case EventrecommendationConstants.GET_RECOMMENDATIONS: in mobileassistantfoundation
-                        Log.d("EvenrecManagerSuccess", "msg.getData().getString(\"result\")" + result);
-                        //jsonResponse = new JSONObject(result);
-                        personalizationDataResponse.OnSuccess(result);
-                   /* } catch (JSONException e) {
-                        Log.e("EvenrecManagerData", e.getClass().getSimpleName() + ": " + e.getMessage());
-                        personalizationDataResponse.OnError(e);
-                    }*/
+                    Log.i("EvenrecManagerData", "Try to get the json stuff");
+                    String result = msg.getData().getString("result");//Needs to be the same as in    case EventrecommendationConstants.GET_RECOMMENDATIONS: in mobileassistantfoundation
+                    Log.d("EvenrecManagerSuccess", "msg.getData().getString(\"result\")" + result);
+                    personalizationDataResponse.OnSuccess(result);
                     break;
             }
         }

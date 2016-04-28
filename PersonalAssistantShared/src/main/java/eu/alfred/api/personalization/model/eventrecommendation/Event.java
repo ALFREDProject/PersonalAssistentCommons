@@ -5,37 +5,63 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.annotations.SerializedName;
 
 import eu.alfred.api.personalization.model.Language;
 
 
 //@JsonIgnoreProperties(ignoreUnknown=true)
 public class Event {
- 
+
+	@SerializedName("eventID")
 	private String eventID;
+	@SerializedName("organizer")
 	private Organizer organizer;
+	@SerializedName("venue")
 	private Venue venue;
+	@SerializedName("end_date")
 	private Date end_date;
+	@SerializedName("modified")
 	private Date modified;
+	@SerializedName("created")
 	private Date created;
+	@SerializedName("start_date")
 	private Date start_date;
+	@SerializedName("num_attendee_rows")
 	private int num_attendee_rows; //int
+	@SerializedName("is_public")
 	private int is_public;		  //bool
+	@SerializedName("repeats")
 	private String repeats;			  //int
+	@SerializedName("capacity")
 	private String capacity;		  //int
+	@SerializedName("timezone_offset")
 	private String timezone_offset;
+	@SerializedName("title")
 	private String title;
+	@SerializedName("url")
 	private String url;
+	@SerializedName("locale")
 	private String locale;
+	@SerializedName("status")
 	private String status;			  //Some enum
+	@SerializedName("timezone")
 	private String timezone;		  // Java timezone
+	@SerializedName("description")
 	private String description;
+	@SerializedName("tickets")
 	private List<Tickets> tickets;
+	@SerializedName("tags")
 	private List<String> tags;		  // Some enum
+	@SerializedName("categories")
 	private List<String> categories;  // Some enum
+	@SerializedName("accessibility")
 	private List<String> accessibility;//MobilityLevel
+	@SerializedName("language")
 	private Language language;		   // Why not use the enum
+	@SerializedName("reviews")
 	private List<Review> reviews;
+	@SerializedName("participants")
 	private List<String> participants;  //List of "Contact"?
 	
 	public String getEventID() {
