@@ -74,8 +74,8 @@ public class EventrecommendationManager implements IEventRecommendationCommand {
                 case EventrecommendationConstants.GET_RECOMMENDATIONS:
                     try {
                         Log.i("EvenrecManagerSuccess", "Try to get the json stuff");
-                        String result = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON);
-                        Log.d("EvenrecManagerSuccess", "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + result);
+                        String result = msg.getData().getString("result");//Needs to be the same as in    case EventrecommendationConstants.GET_RECOMMENDATIONS: in mobileassistantfoundation
+                        Log.d("EvenrecManagerSuccess", "msg.getData().getString(\"result\")" + result);
                         personalizationSuccessResponse.OnSuccess(result);
                     } catch (Exception e) {
                         Log.e("EvenrecManagerSuccess", e.getClass().getSimpleName() + ": " + e.getMessage());
@@ -106,16 +106,16 @@ public class EventrecommendationManager implements IEventRecommendationCommand {
 
                     JSONObject jsonResponse = null;
 
-                    try {
+                  //  try {
                         Log.i("EvenrecManagerData", "Try to get the json stuff");
-                       String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "{}");
-                        Log.i("EvenrecManagerData", "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
-                        jsonResponse = new JSONObject(json);
-                        personalizationDataResponse.OnSuccess(jsonResponse);
-                    } catch (JSONException e) {
+                        String result = msg.getData().getString("result");//Needs to be the same as in    case EventrecommendationConstants.GET_RECOMMENDATIONS: in mobileassistantfoundation
+                        Log.d("EvenrecManagerSuccess", "msg.getData().getString(\"result\")" + result);
+                        //jsonResponse = new JSONObject(result);
+                        personalizationDataResponse.OnSuccess(result);
+                   /* } catch (JSONException e) {
                         Log.e("EvenrecManagerData", e.getClass().getSimpleName() + ": " + e.getMessage());
                         personalizationDataResponse.OnError(e);
-                    }
+                    }*/
                     break;
             }
         }
