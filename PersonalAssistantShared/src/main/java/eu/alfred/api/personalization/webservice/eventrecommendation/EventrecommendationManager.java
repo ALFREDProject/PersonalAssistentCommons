@@ -55,29 +55,65 @@ public class EventrecommendationManager implements IEventRecommendationCommand {
     public void acceptRejectEvent(String userId, String eventId, boolean accept) {
 
     }
+
+
+    private class PersonalizationSuccessResponse extends Handler {
+        private PersonalizationResponse personalizationSuccessResponse;
+
+        public PersonalizationSuccessResponse(PersonalizationResponse personalizationSuccessResponse) {
+            Log.i("EvenrecManagerData", "PersonalizationSuccessResponse constructor");
+            this.personalizationSuccessResponse = personalizationSuccessResponse;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            Log.i("EvenrecManagerSuccess", "handleMessage");
+            int respCode = msg.what;
+
+            switch (respCode) {
+                case EventrecommendationConstants.GET_RECOMMENDATIONS:
+                    try {
+                        Log.i("EvenrecManagerSuccess", "Try to get the json stuff");
+                        String result = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON);
+                        Log.d("EvenrecManagerSuccess", "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + result);
+                        personalizationSuccessResponse.OnSuccess(result);
+                    } catch (Exception e) {
+                        Log.e("EvenrecManagerSuccess", e.getClass().getSimpleName() + ": " + e.getMessage());
+                        personalizationSuccessResponse.OnError(e);
+                    }
+                    break;
+            }
+        }
+    }
+
+
+
+
     private class PersonalizationDataResponse extends Handler {
         private PersonalizationResponse personalizationDataResponse;
 
         public PersonalizationDataResponse(PersonalizationResponse personalizationDataResponse) {
+            Log.i("EvenrecManagerData", "PersonalizationDataResponse constructor");
             this.personalizationDataResponse = personalizationDataResponse;
         }
 
         @Override
         public void handleMessage(Message msg) {
+            Log.i("EvenrecManagerData", "handleMessage");
             int respCode = msg.what;
-
             switch (respCode) {
                 case EventrecommendationConstants.GET_RECOMMENDATIONS:
 
                     JSONObject jsonResponse = null;
 
                     try {
-                        String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "{}");
-                        Log.d("EvenrecManager", "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
+                        Log.i("EvenrecManagerData", "Try to get the json stuff");
+                       String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "{}");
+                        Log.i("EvenrecManagerData", "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
                         jsonResponse = new JSONObject(json);
                         personalizationDataResponse.OnSuccess(jsonResponse);
                     } catch (JSONException e) {
-                        Log.e("EvenrecManager", e.getClass().getSimpleName() + ": " + e.getMessage());
+                        Log.e("EvenrecManagerData", e.getClass().getSimpleName() + ": " + e.getMessage());
                         personalizationDataResponse.OnError(e);
                     }
                     break;
