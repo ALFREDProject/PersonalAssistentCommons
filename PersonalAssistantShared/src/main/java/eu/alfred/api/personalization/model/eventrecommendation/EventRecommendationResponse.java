@@ -2,6 +2,7 @@ package eu.alfred.api.personalization.model.eventrecommendation;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 
 /**
