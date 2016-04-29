@@ -88,7 +88,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
                             prefEditor.putString("pref_PhysicalHardwareButton", (String)response.get("pref_PhysicalHardwareButton"));
                             prefEditor.putString("pref_language", (String)response.get("pref_language"));
                             prefEditor.putString("pref_CADEUrl", (String)response.get("pref_CADEUrl"));
-                            prefEditor.putString(""+ GlobalsettingsKeys.userEventsAccepted, (String)response.get(""));
+                            prefEditor.putString(""+ GlobalsettingsKeys.userEventsAccepted, (String)response.get(""+GlobalsettingsKeys.userEventsAccepted));
                             prefEditor.commit();
                             circleButton.setColor(AppActivity.this.prefs.getString("pref_mircophone_color", "blue"), AppActivity.this);
                         }
