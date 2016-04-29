@@ -1,6 +1,6 @@
 package eu.alfred.api.personalization.model.eventrecommendation;
 
-public class Review {
+public class Review implements java.io.Serializable{
 
 	private String eventid;
 	private String reviewerid;

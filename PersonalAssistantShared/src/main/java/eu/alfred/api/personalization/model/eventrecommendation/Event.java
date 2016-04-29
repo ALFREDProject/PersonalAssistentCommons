@@ -1,17 +1,14 @@
 package eu.alfred.api.personalization.model.eventrecommendation;
 
-import java.io.IOException;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 import java.util.List;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.gson.annotations.SerializedName;
 
 import eu.alfred.api.personalization.model.Language;
 
 
-//@JsonIgnoreProperties(ignoreUnknown=true)
-public class Event {
+public class Event implements java.io.Serializable{
 
 	@SerializedName("eventID")
 	private String eventID;

@@ -20,6 +20,7 @@ import eu.alfred.api.gamemanager.GameManager;
 import eu.alfred.api.globalSettings.GlobalSettings;
 import eu.alfred.api.globalSettings.responses.GlobalSettingsResponse;
 import eu.alfred.api.market.MarketPlace;
+import eu.alfred.api.personalization.model.eventrecommendation.GlobalsettingsKeys;
 import eu.alfred.api.personalization.webservice.PersonalizationManager;
 import eu.alfred.api.personalization.webservice.eventrecommendation.EventrecommendationManager;
 import eu.alfred.api.proxies.interfaces.ICadeCommand;
@@ -45,7 +46,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
     public PersonalizationManager personalizationManager;
 
     public GlobalSettings globalSettings;
-    SharedPreferences prefs;
+    public SharedPreferences prefs;
 
     public CircleButton circleButton;
 
@@ -87,6 +88,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
                             prefEditor.putString("pref_PhysicalHardwareButton", (String)response.get("pref_PhysicalHardwareButton"));
                             prefEditor.putString("pref_language", (String)response.get("pref_language"));
                             prefEditor.putString("pref_CADEUrl", (String)response.get("pref_CADEUrl"));
+                            prefEditor.putString(""+ GlobalsettingsKeys.userEventsAccepted, (String)response.get(""));
                             prefEditor.commit();
                             circleButton.setColor(AppActivity.this.prefs.getString("pref_mircophone_color", "blue"), AppActivity.this);
                         }

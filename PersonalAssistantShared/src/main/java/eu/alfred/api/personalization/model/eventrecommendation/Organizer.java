@@ -3,7 +3,7 @@ package eu.alfred.api.personalization.model.eventrecommendation;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown=true) 
-public class Organizer {
+public class Organizer implements java.io.Serializable{
 
 	private String name;
 	private String description;

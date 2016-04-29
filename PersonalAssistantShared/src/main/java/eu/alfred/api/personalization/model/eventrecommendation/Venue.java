@@ -3,7 +3,7 @@ package eu.alfred.api.personalization.model.eventrecommendation;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown=true) 
-public class Venue {
+public class Venue implements java.io.Serializable{
 
 	private String name;
 	private String postal_code;

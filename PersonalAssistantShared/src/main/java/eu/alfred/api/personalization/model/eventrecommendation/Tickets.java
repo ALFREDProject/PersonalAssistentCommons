@@ -7,7 +7,7 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown=true) 
-public class Tickets {
+public class Tickets implements java.io.Serializable{
 
 	@SerializedName("at_event")
 	private Event at_event;
