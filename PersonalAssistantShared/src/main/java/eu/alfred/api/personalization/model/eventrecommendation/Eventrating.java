@@ -4,6 +4,8 @@ package eu.alfred.api.personalization.model.eventrecommendation;
  * Created by tobias on 2/1/16.
  */
 
+import com.google.gson.annotations.SerializedName;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -11,9 +13,13 @@ import org.springframework.data.mongodb.core.mapping.Field;
  * Created by Tobias on 27/01/2016.
  */
 public class Eventrating {
+    @SerializedName("_id")
     private String _id;
+    @SerializedName("accepted")
     private boolean accepted;
+    @SerializedName("rating")
     private int rating;
+    @SerializedName("eventId")
     private String eventId;
 
     public Eventrating(boolean accepted, int rating, String eventId)

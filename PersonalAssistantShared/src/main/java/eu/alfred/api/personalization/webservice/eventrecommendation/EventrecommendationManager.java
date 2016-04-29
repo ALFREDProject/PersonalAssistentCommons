@@ -7,6 +7,8 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,9 +32,8 @@ public class EventrecommendationManager implements IEventRecommendationCommand {
         this.messenger = messenger;
     }
     @Override
-    public List<EventRecommendationResponse> getRecommendations(String userId, PersonalizationResponse response) {
+    public void getRecommendations(String userId, PersonalizationResponse response) {
         Message msg = Message.obtain(null, EventrecommendationConstants.GET_RECOMMENDATIONS);
-
         if (response != null)
             msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
         Bundle data = new Bundle();
@@ -43,19 +44,37 @@ public class EventrecommendationManager implements IEventRecommendationCommand {
         } catch (RemoteException e) {
             Log.e("ErM",e.getClass().getSimpleName() + ": " + e.getMessage());
         }
-        return null;
     }
 
     @Override
     public void submitRating(Eventrating rating) {
-
+        Message msg = Message.obtain(null, EventrecommendationConstants.SUBMIT_EVENT_RATING);
+        String jsonString = new Gson().toJson(rating);
+        Bundle data = new Bundle();
+        data.putString("rating", jsonString);
+        msg.setData(data);
+        try {
+            messenger.send(msg);
+        } catch (RemoteException e) {
+            Log.e("ErM",e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
     }
 
     @Override
     public void acceptRejectEvent(String userId, String eventId, boolean accept) {
-
+        Message msg = Message.obtain(null, EventrecommendationConstants.ACCEPT_REJECT_EVENT);
+        Bundle data = new Bundle();
+        data.putString("userID", userId);
+        data.putString("eventId", eventId);
+        data.putBoolean("accept", accept);
+        msg.setData(data);
+        try {
+            messenger.send(msg);
+        }
+        catch (RemoteException e) {
+            Log.e("ErM",e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
     }
-
 
     private class PersonalizationSuccessResponse extends Handler {
         private PersonalizationResponse personalizationSuccessResponse;

@@ -13,7 +13,7 @@ import eu.alfred.api.personalization.responses.PersonalizationResponse;
  */
 public interface IEventRecommendationCommand {
 
-    List<EventRecommendationResponse> getRecommendations(String userId, PersonalizationResponse response);
+    void getRecommendations(String userId, PersonalizationResponse response);
     void submitRating(Eventrating rating);
     void acceptRejectEvent(String userId,String eventId, boolean accept);
 }
