@@ -5,6 +5,7 @@ package eu.alfred.api.personalization.model.eventrecommendation;
  */
 public class GlobalsettingsKeys {
     public static String userEventsAccepted = "pref_userEventsAccepted";
+    public static String userId = "pref_userId";
     public static String userEventsRejected = "pref_userEventsRejected";
 
 }
