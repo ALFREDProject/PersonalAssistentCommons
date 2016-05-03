@@ -26,6 +26,7 @@ import eu.alfred.api.gamemanager.GameManager;
 import eu.alfred.api.globalSettings.GlobalSettings;
 import eu.alfred.api.globalSettings.responses.GlobalSettingsResponse;
 import eu.alfred.api.market.MarketPlace;
+import eu.alfred.api.personalization.model.eventrecommendation.GlobalsettingsKeys;
 import eu.alfred.api.personalization.webservice.PersonalizationManager;
 import eu.alfred.api.proxies.interfaces.ICadeCommand;
 import eu.alfred.api.sensors.SAFDataFacade;
@@ -111,6 +112,8 @@ public abstract class AppActivityV23 extends FragmentActivity implements ICadeCo
                             prefEditor.putString("pref_PhysicalHardwareButton", (String) response.get("pref_PhysicalHardwareButton"));
                             prefEditor.putString("pref_language",(String) response.get("pref_language"));
                             prefEditor.putString("pref_CADEUrl",(String) response.get("pref_CADEUrl"));
+                            prefEditor.putString(""+ GlobalsettingsKeys.userEventsAccepted, (String)response.get(""+GlobalsettingsKeys.userEventsAccepted));
+                            prefEditor.putString(""+ GlobalsettingsKeys.userId, (String)response.get(""+GlobalsettingsKeys.userId));
                             prefEditor.commit();
                             circleButton.setColor(prefs.getString("pref_mircophone_color","blue"), AppActivityV23.this);
                         }
