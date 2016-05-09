@@ -82,4 +82,5 @@ public class PersonalizationConstants {
     public static final int RETRIEVE_ALL_GROUPS_RESPONSE = 33367;
 
     public static final String EXTRAS_JSON = "json";
+    public static final String EXTRAS_EXCEPTION = "exception";
 }

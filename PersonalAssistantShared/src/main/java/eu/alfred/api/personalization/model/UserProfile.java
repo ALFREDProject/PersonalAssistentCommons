@@ -1,6 +1,7 @@
 package eu.alfred.api.personalization.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -301,7 +302,41 @@ public class UserProfile implements Serializable {
 
 	@Override
 	public String toString() {
-		return "id: " + getId() + ", first-name: " + getFirstName() + ", last-name: " + getLastName() + ", date of birth: " + getDateOfBirth() + "...";
+		final StringBuilder sb = new StringBuilder("UserProfile{");
+		sb.append("id='").append(id).append('\'');
+		sb.append(", firstName='").append(firstName).append('\'');
+		sb.append(", middleName='").append(middleName).append('\'');
+		sb.append(", lastName='").append(lastName).append('\'');
+		sb.append(", alfredUserName='").append(alfredUserName).append('\'');
+		sb.append(", prefferedName='").append(prefferedName).append('\'');
+		sb.append(", gender=").append(gender);
+		sb.append(", dateOfBirth=").append(dateOfBirth);
+		sb.append(", phone='").append(phone).append('\'');
+		sb.append(", mobilePhone='").append(mobilePhone).append('\'');
+		sb.append(", email='").append(email).append('\'');
+		sb.append(", residentialAddress=").append(residentialAddress);
+		sb.append(", postalAddress=").append(postalAddress);
+		sb.append(", citizenship='").append(citizenship).append('\'');
+		sb.append(", nationality='").append(nationality).append('\'');
+		sb.append(", language=").append(language);
+		sb.append(", socialSecurityNumber='").append(socialSecurityNumber).append('\'');
+		sb.append(", maritalStatus=").append(maritalStatus);
+		sb.append(", educationLevel=").append(educationLevel);
+		sb.append(", employmentStatus=").append(employmentStatus);
+		sb.append(", healthInsurance='").append(healthInsurance).append('\'');
+		sb.append(", profession='").append(profession).append('\'');
+		sb.append(", anniversaryDate=").append(anniversaryDate);
+		sb.append(", nextOfKin=").append(nextOfKin);
+		sb.append(", myersBriggsIndicator=").append(myersBriggsIndicator);
+		sb.append(", selfDescrPersonalityChar=").append(Arrays.toString(selfDescrPersonalityChar));
+		sb.append(", interests=").append(Arrays.toString(interests));
+		sb.append(", culturalOrFamilyNeeds=").append(Arrays.toString(culturalOrFamilyNeeds));
+		sb.append(", socialMediaProfiles=").append(Arrays.toString(socialMediaProfiles));
+		sb.append(", mobilityLevel=").append(mobilityLevel);
+		sb.append(", lastUpdated=").append(lastUpdated);
+		sb.append(", alfedAppInstalationDate=").append(alfedAppInstalationDate);
+		sb.append('}');
+		return sb.toString();
 	}
 
 	public String getAlfredUserName() {

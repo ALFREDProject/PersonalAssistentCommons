@@ -8,6 +8,8 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -34,13 +36,14 @@ import eu.alfred.api.personalization.model.HealthProfile;
 import eu.alfred.api.personalization.model.Requester;
 import eu.alfred.api.personalization.model.UserProfile;
 import eu.alfred.api.personalization.responses.PersonalizationResponse;
+import eu.alfred.helper.StringUtils;
 
 
 public class PersonalizationManager {
 
     private Messenger messenger;
 
-	private final static String TAG = "PMgr";
+	private final static String TAG = "P13nMgr";
 
     private class PersonalizationSuccessResponse extends Handler {
         private PersonalizationResponse personalizationSuccessResponse;
@@ -75,7 +78,16 @@ public class PersonalizationManager {
                     try {
 	                    String result = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON);
 	                    Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + result);
+                        String exception = msg.getData().getString(PersonalizationConstants.EXTRAS_EXCEPTION);
+                        Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_EXCEPTION + "}=" + exception);
+
+                        if (exception != null && !exception.isEmpty()) {
+                            personalizationSuccessResponse.OnError(new Exception(exception));
+                            break;
+                        }
+
                         personalizationSuccessResponse.OnSuccess(result);
+
                     } catch (Exception e) {
 	                    Log.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
                         personalizationSuccessResponse.OnError(e);
@@ -114,6 +126,14 @@ public class PersonalizationManager {
                     try {
 	                    String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "{}");
 	                    Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
+                        String exception = msg.getData().getString(PersonalizationConstants.EXTRAS_EXCEPTION);
+                        Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_EXCEPTION + "}=" + exception);
+
+                        if (exception != null && !exception.isEmpty()) {
+                            personalizationDataResponse.OnError(new Exception(exception));
+                            break;
+                        }
+
                         jsonResponse = new JSONObject(json);
                         personalizationDataResponse.OnSuccess(jsonResponse);
                     } catch (JSONException e) {
@@ -141,6 +161,14 @@ public class PersonalizationManager {
                     try {
                         String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "[]");
                         Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
+                        String exception = msg.getData().getString(PersonalizationConstants.EXTRAS_EXCEPTION);
+                        Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_EXCEPTION + "}=" + exception);
+
+                        if (exception != null && !exception.isEmpty()) {
+                            personalizationDataResponse.OnError(new Exception(exception));
+                            break;
+                        }
+
                         List<Contact> profiles = new ArrayList<>();
                         JSONArray jsonResponse = new JSONArray(json);
                         for(int i = 0; i < jsonResponse.length(); i++) {
@@ -172,6 +200,14 @@ public class PersonalizationManager {
 					try {
 						String json = msg.getData().getString(PersonalizationConstants.EXTRAS_JSON, "[{}]");
 						Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_JSON + "}=" + json);
+                        String exception = msg.getData().getString(PersonalizationConstants.EXTRAS_EXCEPTION);
+                        Log.d(TAG, "data{" + PersonalizationConstants.EXTRAS_EXCEPTION + "}=" + exception);
+
+                        if (exception != null && !exception.isEmpty()) {
+                            personalizationDataResponse.OnError(new Exception(exception));
+                            break;
+                        }
+
 						jsonResponse = new JSONArray(json);
 						personalizationDataResponse.OnSuccess(jsonResponse);
 					} catch (JSONException e) {
@@ -269,28 +305,29 @@ public class PersonalizationManager {
 
 	// Updates the User Profile with the specified Id for the provided values
     public void updateUserProfile(UserProfile userToUpdate, PersonalizationResponse response) {
-        Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_USER_PROFILE);
-
-        if (response != null)
-            msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
 
         UserProfileDto dto = UserProfileMapper.toDto(userToUpdate);
-        String valuesToUpdate = new Gson().toJson(dto).toString();
 
-        Bundle data = new Bundle();
+	    // json string contains Lists, e. g.    "socialMediaProfiles": [ "string1", "string2" ]
+	    // must be converted to single string   "socialMediaProfiles": "string1,string2"
 
-		data.putString("userID", userToUpdate.getId());
-		data.putString("valuesToUpdate", valuesToUpdate);
-        msg.setData(data);
-        try {
-            messenger.send(msg);
-        } catch (RemoteException e) {
-	        Log.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
-        }
+	    JsonParser parser = new JsonParser();
+	    JsonObject updateObject = parser.parse(new Gson().toJson(dto)).getAsJsonObject();
+
+	    updateObject.remove("id");
+
+	    StringUtils.compactListToString(updateObject, "culturalOrFamilyNeeds");
+	    StringUtils.compactListToString(updateObject, "interests");
+	    StringUtils.compactListToString(updateObject, "selfDescrPersonalityChar");
+	    StringUtils.compactListToString(updateObject, "socialMediaProfiles");
+
+	    updateUserProfile(userToUpdate.getId(), updateObject.toString(), response);
     }
 
     // Updates the User Profile with the specified Id for the provided values
     public void updateUserProfile(String userID, String valuesToUpdate, PersonalizationResponse response) {
+        Log.d(TAG, "updateUserProfile(ID " + userID + ")");
+        Log.d(TAG, "valuesToUpdate: " + valuesToUpdate);
         Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_USER_PROFILE);
 
         if (response != null)
