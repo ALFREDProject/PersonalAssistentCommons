@@ -6,7 +6,7 @@ import java.util.HashSet;
 
 public class AttributesHelper implements Serializable {
 	
-	public HashSet<String> getUserProfileFields() {
+	public static HashSet<String> getUserProfileFields() {
 		
 		UserProfile userProfile = new UserProfile();
 		Class<?> c = userProfile.getClass();
