@@ -315,11 +315,7 @@ public class PersonalizationManager {
 	    JsonObject updateObject = parser.parse(new Gson().toJson(dto)).getAsJsonObject();
 
 	    updateObject.remove("id");
-
-	    StringUtils.compactListToString(updateObject, "culturalOrFamilyNeeds");
-	    StringUtils.compactListToString(updateObject, "interests");
-	    StringUtils.compactListToString(updateObject, "selfDescrPersonalityChar");
-	    StringUtils.compactListToString(updateObject, "socialMediaProfiles");
+	    StringUtils.fixFullJson(updateObject);
 
 	    updateUserProfile(userToUpdate.getId(), updateObject.toString(), response);
     }
