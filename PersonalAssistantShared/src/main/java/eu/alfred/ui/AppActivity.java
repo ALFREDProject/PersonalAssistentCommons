@@ -62,7 +62,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
     private BroadcastReceiver endSpeakReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            circleButton.ButtonGotPressed();
+            if(circleButton.isActive()) circleButton.ButtonGotPressed();
         }
     };
 
