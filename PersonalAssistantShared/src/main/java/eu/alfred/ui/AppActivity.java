@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Messenger;
 import android.support.v4.app.FragmentActivity;
@@ -49,19 +50,19 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
     public SharedPreferences prefs;
 
     public CircleButton circleButton;
+    public BackToPAButton backToPAButton;
 
     private BroadcastReceiver readyToSpeakReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            circleButton.MakeRed();
+            circleButton.ButtonGotPressed();
         }
     };
 
     private BroadcastReceiver endSpeakReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            circleButton.MakeBlue();
-            circleButton.setIsActive(false);
+            circleButton.ButtonGotPressed();
         }
     };
 
@@ -71,6 +72,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
 
         setContentView(R.layout.voice_btn_layout);
         circleButton = (CircleButton) findViewById(R.id.voiceControlBtn);
+        backToPAButton = (BackToPAButton) findViewById(R.id.backControlBtn);
         personalAssistant = new PersonalAssistant(getApplicationContext());
 
         personalAssistant.setOnPersonalAssistantConnectionListener(new PersonalAssistantConnection() {
@@ -92,6 +94,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
                             prefEditor.putString(""+ GlobalsettingsKeys.userId, (String)response.get(""+GlobalsettingsKeys.userId));
                             prefEditor.commit();
                             circleButton.setColor(AppActivity.this.prefs.getString("pref_mircophone_color", "blue"), AppActivity.this);
+                            backToPAButton.setColor(AppActivity.this.prefs.getString("pref_mircophone_color", "blue"), AppActivity.this);
                         }
 
                         cade = new Cade(msg);
@@ -145,18 +148,6 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
         }
     }
 
-    public void ButtonGotPressed(){
-        circleButton.ButtonGotPressed();
-
-        if(cade!=null) {
-            if (circleButton.IsButtonRed()){
-                cade.StartListening(getPackageName());
-            } else {
-                cade.StopListening(getPackageName());
-            }
-        }
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -179,7 +170,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
     protected void onStop(){
         super.onStop();
         if (circleButton.isActive())
-            ButtonGotPressed();
+            circleButton.ButtonGotPressed();
     }
 
     @Override
@@ -189,15 +180,35 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
     }
 
 
-        public class CircleTouchListener implements View.OnTouchListener {
+    public class MicrophoneTouchListener implements View.OnTouchListener {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                ButtonGotPressed();
+                if(cade!=null) {
+                    if (!circleButton.isActive()) {
+                        cade.StartListening(getPackageName());
+                    } else {
+                        cade.StopListening(getPackageName());
+                    }
+                }
                 return true;
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                circleButton.ButtonGotReleased();
+
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public class BackTouchListener implements View.OnTouchListener {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                PackageManager pm = getPackageManager();
+                Intent intent = pm.getLaunchIntentForPackage("eu.alfred.personalassistant");
+                startActivity(intent);
                 return true;
             }
             return false;

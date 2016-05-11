@@ -16,21 +16,22 @@ import android.widget.ImageView;
 
 import eu.alfred.personalassistant.sharedlibrary.R;
 
-public class CircleButton extends ImageView {
+public class BackToPAButton extends ImageView {
 
     private static final int PRESSED_COLOR_LIGHTUP = 255 / 25;
     private static final int PRESSED_RING_ALPHA = 0;
     private static final int DEFAULT_PRESSED_RING_WIDTH_DIP = 4;
-    private static final int ANIMATION_TIME_ID = 1000;
+    private static final int ANIMATION_TIME_ID = 100;
 
     public int centerY;
     public int centerX;
     private int outerRadius;
     private int pressedRingRadius;
     private Boolean isRed;
-
+    private ValueAnimator colorAnimation;
     private Paint circlePaint;
     private Paint focusPaint;
+    private Paint textPaint;
 
     private float animationProgress;
 
@@ -39,83 +40,33 @@ public class CircleButton extends ImageView {
     private int pressedColor;
     private ObjectAnimator pressedAnimator;
 
-    private boolean isToggleable;
-    private boolean isPressed;
-    private boolean hasAnimationEnded;
-    private boolean isAnimationRunning;
-
-    private boolean isActive;
     private boolean isAppButton = false;
 
     private AttributeSet attrs;
 
     private TransitionDrawable transition;
 
-    private ValueAnimator colorAnimation;
-
-    public CircleButton(Context context) {
+    public BackToPAButton(Context context) {
         super(context);
         this.attrs = null;
         init(context);
     }
 
-    public CircleButton(Context context, AttributeSet attrs) {
+    public BackToPAButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.attrs = attrs;
         init(context);
     }
 
-    public CircleButton(Context context, AttributeSet attrs, int defStyle) {
+    public BackToPAButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.attrs = attrs;
         init(context);
     }
 
 
-    public void ButtonGotPressed() {
-        if (getIsToggleable()) {
-            if (!isActive()) {
-                setIsActive(true);
-                setPressed(true);
-                MakeRed();
-                showPressedRing();
+    public void ButtonGotPressed(){
 
-
-                //colorAnimation.start();
-            } else {
-                setIsActive(false);
-                setPressed(false);
-                MakeBlue();
-                hidePressedRing();
-                //colorAnimation.reverse();
-            }
-        } else {
-            setIsActive(true);
-            showPressedRing();
-        }
-    }
-
-    public void ButtonGotReleased() {
-        if (!getIsToggleable())
-        {
-            setIsActive(false);
-            hidePressedRing();
-            //colorAnimation.reverse();
-        }
-    }
-
-    public void MakeRed(){
-        if (!isRed) {
-            isRed = true;
-            colorAnimation.start();
-        }
-    }
-
-    public void MakeBlue(){
-        if (isRed){
-            colorAnimation.reverse();
-            isRed = false;
-        }
     }
 
     @Override
@@ -127,7 +78,9 @@ public class CircleButton extends ImageView {
                     (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 65,
                             getResources().getDisplayMetrics()), circlePaint);
         } else {
-            canvas.drawCircle(centerX, centerY, outerRadius, circlePaint);
+            canvas.drawCircle( centerX, centerY, outerRadius, circlePaint);
+            canvas.drawText("Menu", centerX-outerRadius+15, centerY+15, textPaint);
+
         }
         super.onDraw(canvas);
     }
@@ -172,15 +125,6 @@ public class CircleButton extends ImageView {
         this.invalidate();
     }
 
-    //TODO change that
-    public boolean getIsToggleable(){
-        return true;
-    }
-
-    public void setIsToggleable(boolean isToggleable){
-        this.isToggleable = isToggleable;
-        this.invalidate();
-    }
 
     public void setColor(String color, Context context) {
         switch (color) {
@@ -217,6 +161,24 @@ public class CircleButton extends ImageView {
         createColorAnimation(context);
     }
 
+    public void createColorAnimation(Context context) {
+
+        Integer colorTo = context.getResources().getColor(R.color.MicrophoneRed);
+        Integer colorFrom = context.getResources().getColor(defaultColor);
+
+        if (colorAnimation!=null) colorAnimation.removeAllUpdateListeners();
+        colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                setColor((Integer) animator.getAnimatedValue());
+            }
+
+        });
+        colorAnimation.reverse();
+    }
+
     public void setColor(int color) {
 
         defaultColor = color;
@@ -251,12 +213,18 @@ public class CircleButton extends ImageView {
         this.setScaleType(ScaleType.CENTER_INSIDE);
         setClickable(true);
 
-        setIsActive(false);
+
         circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         circlePaint.setStyle(Paint.Style.FILL);
 
         focusPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         focusPaint.setStyle(Paint.Style.STROKE);
+
+        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(Color.WHITE);
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setColor(Color.WHITE);
+        textPaint.setTextSize(70);
 
         pressedRingWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_PRESSED_RING_WIDTH_DIP, getResources()
                 .getDisplayMetrics());
@@ -274,26 +242,6 @@ public class CircleButton extends ImageView {
         isRed = false;
 
         focusPaint.setStrokeWidth(pressedRingWidth);
-        pressedAnimator = ObjectAnimator.ofFloat(this, "animationProgress", 0f, 0f);
-        pressedAnimator.setDuration(ANIMATION_TIME_ID);
-    }
-
-    public void createColorAnimation(Context context) {
-
-        Integer colorTo = context.getResources().getColor(R.color.MicrophoneRed);
-        Integer colorFrom = context.getResources().getColor(defaultColor);
-
-        if (colorAnimation!=null) colorAnimation.removeAllUpdateListeners();
-        colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                setColor((Integer) animator.getAnimatedValue());
-            }
-
-        });
-        colorAnimation.reverse();
     }
 
     private int getHighlightColor(int color, int amount) {
@@ -307,30 +255,8 @@ public class CircleButton extends ImageView {
         hidePressedRing();
     }
 
-    public boolean IsButtonRed(){
-        return isRed;
-    }
-
     public void setIsAppButton(boolean isAppButton) {
         this.isAppButton = isAppButton;
     }
 
-    public void StartRecording(boolean isClicked){
-        if (!isClicked)
-            setPressed(true);
-
-    }
-
-    public void StopRecording(boolean isClicked) {
-        if (!isClicked)
-            setPressed(false);
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
-    }
 }
