@@ -437,6 +437,23 @@ public class PersonalizationManager {
     }
 
 	// Updates the specified Contact of the specified ALFRED user with the specified Id for the provided values
+	public void updateUserContact(Contact contactToUpdate, PersonalizationResponse response) {
+
+		ContactDto dto = ContactMapper.toDto(contactToUpdate);
+
+		// json string contains Lists, e. g.    "socialMediaProfiles": [ "string1", "string2" ]
+		// must be converted to single string   "socialMediaProfiles": "string1,string2"
+
+		JsonParser parser = new JsonParser();
+		JsonObject updateObject = parser.parse(new Gson().toJson(dto)).getAsJsonObject();
+
+		updateObject.remove("id");
+		StringUtils.fixFullJson(updateObject);
+
+		updateUserContact(contactToUpdate.getId(), updateObject.toString(), response);
+	}
+
+	// Updates the specified Contact of the specified ALFRED user with the specified Id for the provided values
     public void updateUserContact(String contactID, String valuesToUpdate, PersonalizationResponse response) {
         Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_USER_CONTACT);
 
@@ -454,29 +471,6 @@ public class PersonalizationManager {
 	        Log.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
-
-	// Updates the specified Contact of the specified ALFRED user with the specified Id for the provided values
-	public void updateUserContact(Contact contactToUpdate, PersonalizationResponse response) {
-		Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_USER_CONTACT);
-
-		if (response != null)
-			msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
-
-
-		ContactDto dto = ContactMapper.toDto(contactToUpdate);
-		String valuesToUpdate = new Gson().toJson(dto).toString();
-
-		Bundle data = new Bundle();
-
-		data.putString("contactID", contactToUpdate.getId());
-		data.putString("valuesToUpdate", valuesToUpdate);
-		msg.setData(data);
-		try {
-			messenger.send(msg);
-		} catch (RemoteException e) {
-			Log.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
-		}
-	}
 
 	// Retrieves the specified Contact with the specified Id
     public void retrieveUserContact(String contactID, PersonalizationResponse response) {
@@ -573,6 +567,23 @@ public class PersonalizationManager {
     }
 
 	// Updates the Requester with the specified Id for the provided values
+	public void updateRequester(Requester requesterToUpdate, PersonalizationResponse response) {
+
+		RequesterDto dto = RequesterMapper.toDto(requesterToUpdate);
+
+		// json string contains Lists, e. g.    "socialMediaProfiles": [ "string1", "string2" ]
+		// must be converted to single string   "socialMediaProfiles": "string1,string2"
+
+		JsonParser parser = new JsonParser();
+		JsonObject updateObject = parser.parse(new Gson().toJson(dto)).getAsJsonObject();
+
+		updateObject.remove("id");
+		StringUtils.fixFullJson(updateObject);
+
+		updateRequester(requesterToUpdate.getId(), updateObject.toString(), response);
+	}
+
+	// Updates the Requester with the specified Id for the provided values
     public void updateRequester(String requesterId, String valuesToUpdate, PersonalizationResponse response) {
         Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_REQUESTER);
 
@@ -590,28 +601,6 @@ public class PersonalizationManager {
 	        Log.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
-
-	// Updates the Requester with the specified Id for the provided values
-	public void updateRequester(Requester requesterToUpdate, PersonalizationResponse response) {
-		Message msg = Message.obtain(null, PersonalizationConstants.UPDATE_REQUESTER);
-
-		if (response != null)
-			msg.replyTo = new Messenger(new PersonalizationSuccessResponse(response));
-
-		RequesterDto dto = RequesterMapper.toDto(requesterToUpdate);
-		String valuesToUpdate = new Gson().toJson(dto).toString();
-
-		Bundle data = new Bundle();
-
-		data.putString("requesterId", requesterToUpdate.getId());
-		data.putString("valuesToUpdate", valuesToUpdate);
-		msg.setData(data);
-		try {
-			messenger.send(msg);
-		} catch (RemoteException e) {
-			Log.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
-		}
-	}
 
 	// Deletes the Requester with the specified Id from the repository
     public void deleteRequester(String requesterId, PersonalizationResponse response) {
@@ -651,6 +640,23 @@ public class PersonalizationManager {
         } catch (RemoteException e) {
 	        Log.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
         }
+    }
+
+	// Updates the HealthProfile of a specified ALFRED user
+    public void updateUserHealthProfile(HealthProfile healthProfileToUpdate, PersonalizationResponse response) {
+
+	    HealthProfileDto dto = HealthProfileMapper.toDto(healthProfileToUpdate);
+
+	    // json string contains Lists, e. g.    "socialMediaProfiles": [ "string1", "string2" ]
+	    // must be converted to single string   "socialMediaProfiles": "string1,string2"
+
+	    JsonParser parser = new JsonParser();
+	    JsonObject updateObject = parser.parse(new Gson().toJson(dto)).getAsJsonObject();
+
+	    updateObject.remove("id");
+	    StringUtils.fixFullJson(updateObject);
+
+	    updateUserHealthProfile(healthProfileToUpdate.getId(), updateObject.toString(), response);
     }
 
 	// Updates the HealthProfile of a specified ALFRED user
@@ -727,6 +733,23 @@ public class PersonalizationManager {
         } catch (RemoteException e) {
 	        Log.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
         }
+    }
+
+	// Updates the group with the specified ID
+    public void updateGroup(Group groupToUpdate, PersonalizationResponse response) {
+
+	    GroupDto dto = GroupMapper.toDto(groupToUpdate);
+
+	    // json string contains Lists, e. g.    "socialMediaProfiles": [ "string1", "string2" ]
+	    // must be converted to single string   "socialMediaProfiles": "string1,string2"
+
+	    JsonParser parser = new JsonParser();
+	    JsonObject updateObject = parser.parse(new Gson().toJson(dto)).getAsJsonObject();
+
+	    updateObject.remove("id");
+	    StringUtils.fixFullJson(updateObject);
+
+	    updateGroup(groupToUpdate.getId(), updateObject.toString(), response);
     }
 
 	// Updates the group with the specified ID
