@@ -179,7 +179,7 @@ public class PersonalizationManager {
                         }
                         personalizationDataResponse.OnSuccess(profiles);
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
                         personalizationDataResponse.OnError(e);
                     }
 
