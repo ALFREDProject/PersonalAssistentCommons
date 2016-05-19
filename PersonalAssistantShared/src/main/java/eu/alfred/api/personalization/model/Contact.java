@@ -1,6 +1,7 @@
 package eu.alfred.api.personalization.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -145,7 +146,28 @@ public class Contact implements Serializable {
 
 	@Override
 	public String toString() {
-		return "id: " + this.getId() + ", first-name: " + this.getFirstName() + "...";
+		final StringBuilder sb = new StringBuilder("Contact{");
+		sb.append("id='").append(id).append('\'');
+		sb.append(", alfredUserName='").append(alfredUserName).append('\'');
+		sb.append(", contactsAlfredId='").append(contactsAlfredId).append('\'');
+		sb.append(", userID='").append(userID).append('\'');
+		sb.append(", firstName='").append(firstName).append('\'');
+		sb.append(", middleName='").append(middleName).append('\'');
+		sb.append(", lastName='").append(lastName).append('\'');
+		sb.append(", prefferedName='").append(prefferedName).append('\'');
+		sb.append(", gender=").append(gender);
+		sb.append(", dateOfBirth=").append(dateOfBirth);
+		sb.append(", phone='").append(phone).append('\'');
+		sb.append(", mobilePhone='").append(mobilePhone).append('\'');
+		sb.append(", email='").append(email).append('\'');
+		sb.append(", residentialAddress=").append(residentialAddress);
+		sb.append(", postalAddress=").append(postalAddress);
+		sb.append(", relationToUser=").append(Arrays.toString(relationToUser));
+		sb.append(", accessLevels=").append(accessLevels);
+		sb.append(", socialMediaProfiles=").append(Arrays.toString(socialMediaProfiles));
+		sb.append(", accessRightsToAttributes=").append(accessRightsToAttributes);
+		sb.append('}');
+		return sb.toString();
 	}
 
 	public String getAlfredUserName() {

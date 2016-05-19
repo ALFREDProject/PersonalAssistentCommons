@@ -388,9 +388,12 @@ public class PersonalizationManager {
 
 		Gson gson = new Gson();
 		data.putString("userID", userID);
+
 		ContactDto newContactDto = ContactMapper.toDto(newContact);
-		String newContactJson = gson.toJson(newContactDto);
-		data.putString("newContact", newContactJson);
+        JsonObject contactObject = new JsonParser().parse(new Gson().toJson(newContactDto)).getAsJsonObject();
+        contactObject.remove("id");
+	    data.putString("newContact", contactObject.toString());
+
         msg.setData(data);
         try {
             messenger.send(msg);
