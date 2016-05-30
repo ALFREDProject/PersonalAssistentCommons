@@ -115,7 +115,7 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
 
             @Override
             public void OnDisconnected() {
-                // Do some cleanup stuff
+                AppActivity.this.finish();
             }
         });
 
@@ -131,6 +131,11 @@ public abstract class AppActivity extends FragmentActivity implements ICadeComma
         int methodToCall = intent.getIntExtra("method",0);
         String command = intent.getStringExtra("command");
         HashMap args = (HashMap) intent.getSerializableExtra("args");
+
+        if (getIntent().getBooleanExtra("EXIT", false))
+        {
+            finish();
+        }
 
         switch (methodToCall) {
             case CadeConstants.IS_ACTION:
