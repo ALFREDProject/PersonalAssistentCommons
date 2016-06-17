@@ -7,7 +7,7 @@ import eu.alfred.api.personalization.model.eventrecommendation.Eventrating;
  */
 public class EventratingMapper {
     public static Eventrating toModel(EventratingDto eventratingDto) {
-        return new Eventrating(eventratingDto.id.isAccepted(),eventratingDto.id.getRating(),eventratingDto.id.getEventId());
+        return new Eventrating(eventratingDto.id.isAccepted(),eventratingDto.id.getRating(),eventratingDto.id.getEventId(),eventratingDto.id.getUserId());
     }
     public static EventratingDto toDto(Eventrating rating) {
         EventratingDto dto = new EventratingDto();
