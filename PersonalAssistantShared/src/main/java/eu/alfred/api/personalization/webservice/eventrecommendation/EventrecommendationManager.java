@@ -51,7 +51,12 @@ public class EventrecommendationManager implements IEventRecommendationCommand {
         Message msg = Message.obtain(null, EventrecommendationConstants.SUBMIT_EVENT_RATING);
         String jsonString = new Gson().toJson(rating);
         Bundle data = new Bundle();
-        data.putString("rating", jsonString);
+        //data.putString("rating", jsonString);
+
+        data.putString("userID", rating.getUserId());
+        data.putString("eventID", rating.getEventId());
+        data.putBoolean("accept", rating.isAccepted());
+        data.putInt("rating", rating.getRating());
         msg.setData(data);
         try {
             messenger.send(msg);
