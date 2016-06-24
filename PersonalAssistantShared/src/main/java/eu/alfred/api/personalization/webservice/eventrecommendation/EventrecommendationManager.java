@@ -9,15 +9,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
-
-import eu.alfred.api.personalization.model.eventrecommendation.EventRecommendationResponse;
 import eu.alfred.api.personalization.model.eventrecommendation.Eventrating;
 import eu.alfred.api.personalization.responses.PersonalizationResponse;
-import eu.alfred.api.personalization.webservice.PersonalizationConstants;
 import eu.alfred.api.proxies.interfaces.IEventRecommendationCommand;
 
 /**
@@ -32,12 +25,17 @@ public class EventrecommendationManager implements IEventRecommendationCommand {
         this.messenger = messenger;
     }
     @Override
-    public void getRecommendations(String userId, PersonalizationResponse response) {
-        Message msg = Message.obtain(null, EventrecommendationConstants.GET_RECOMMENDATIONS);
+    public void getRecommendations(String userId, boolean isFriendsOnly,PersonalizationResponse response) {
+        Message msg;
+        msg = Message.obtain(null, EventrecommendationConstants.GET_RECOMMENDATIONS);
         if (response != null)
             msg.replyTo = new Messenger(new PersonalizationDataResponse(response));
         Bundle data = new Bundle();
+
+        Log.i("GetEvents: ","UserId is "+userId);
         data.putString("userID", userId);
+        Log.i("GetEvents: ","isFriendsOnly is "+isFriendsOnly);
+        data.putBoolean("isFriendsOnly", isFriendsOnly);
         msg.setData(data);
         try {
             messenger.send(msg);
@@ -45,6 +43,7 @@ public class EventrecommendationManager implements IEventRecommendationCommand {
             Log.e("ErM",e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
+
 
     @Override
     public void submitRating(Eventrating rating) {
