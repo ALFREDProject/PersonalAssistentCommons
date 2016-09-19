@@ -29,8 +29,8 @@ This libary enables the developer to access functionalities from
 
 1. This project has the following path:
 
-    \personalassistantcommons\PersonalAssistantShared\build\outputs\aar 
-    
+    \personalassistantcommons\PersonalAssistantShared\build\outputs\aar
+ 
 You can find <b>PersonalAssistentShared-debug.aar</b> there. Copy it an paste the file into 
 
     [yourproject]\app\libs 
@@ -58,4 +58,4 @@ What AppActivity does:
 
 So, your on create looks like: 
  
- 
+![alt tag](howto1?raw=true)
