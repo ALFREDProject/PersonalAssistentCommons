@@ -59,3 +59,8 @@ What AppActivity does:
 So, your on create looks like: 
  
 ![alt tag](howto1.JPG?raw=true)
+IMPORTANT: Dont implement your own TouchListener, otherwise it will not work. 
+ 
+2. As you can see, you are referencing to a „CircleButton“. It is an overlay to your app GUI, so that you also will be able to continue speaking, although you are not in the Personal Assistent App itself. Define the Button also in your activity_main.xml-file: 
+
+![alt tag](howto2.JPG?raw=true)
