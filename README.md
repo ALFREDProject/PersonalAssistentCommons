@@ -29,11 +29,11 @@ This libary enables the developer to access functionalities from
 
 1. This project has the following path:
 
-    \personalassistantcommons\PersonalAssistantShared\build\outputs\aar
+> \personalassistantcommons\PersonalAssistantShared\build\outputs\aar
  
 You can find <b>PersonalAssistentShared-debug.aar</b> there. Copy it an paste the file into 
 
-    [yourproject]\app\libs 
+> [yourproject]\app\libs 
 
 2. Run Android Studio. There, put into your build.gradle (module): 
 
@@ -57,10 +57,15 @@ What AppActivity does:
 * Registers corresponding recievers (for start / stop listening). 
 
 So, your on create looks like: 
- 
+
+<p align="center">
 ![alt tag](howto1.JPG?raw=true)
+</p>
+
 IMPORTANT: Dont implement your own TouchListener, otherwise it will not work. 
  
 2. As you can see, you are referencing to a „CircleButton“. It is an overlay to your app GUI, so that you also will be able to continue speaking, although you are not in the Personal Assistent App itself. Define the Button also in your activity_main.xml-file: 
 
+<p align="center">
 ![alt tag](howto2.JPG?raw=true)
+</p>
