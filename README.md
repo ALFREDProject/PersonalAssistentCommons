@@ -20,7 +20,7 @@ This libary enables the developer to access functionalities from
 
 ## Execution and Usage
 
-1. This project has the following path: \personalassistantcommons\PersonalAssistantShared\build\outputs\aar You can find PersonalAssistentShared-debug.aar there. Copy it.
+1. This project has the following path: #\personalassistantcommons\PersonalAssistantShared\build\outputs\aar You can find PersonalAssistentShared-debug.aar there. Copy it.
 
 
 
