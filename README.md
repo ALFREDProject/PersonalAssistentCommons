@@ -47,9 +47,7 @@ You can find <b>PersonalAssistentShared-debug.aar</b> there. Copy it an paste th
 
 ## Using PAC In Your App
 
-Now, the Personal Assistent Commons is in your project. To use it correctly and enable it for accessing PA modules / being accessed:
-
-1. Now, your MainActivity can extend from „AppActivity“. 
+Now, the Personal Assistent Commons is in your project. To use it correctly and enable it for accessing PA modules / being accessed. Your MainActivity can extend from „AppActivity“. 
  
 What AppActivity does:  
 * It already integrates the every Personal Assistent Module. 
@@ -60,12 +58,13 @@ So, your on create looks like:
 
 <p align="center">
 <img src ="howto1.JPG"/>
+<dd IMPORTANT: Dont implement your own TouchListener, otherwise it will not work. />
 </p>
 
-IMPORTANT: Dont implement your own TouchListener, otherwise it will not work. 
+
  
 2. As you can see, you are referencing to a „CircleButton“. It is an overlay to your app GUI, so that you also will be able to continue speaking, although you are not in the Personal Assistent App itself. Define the Button also in your activity_main.xml-file: 
 
 <p align="center">
-![alt tag](howto2.JPG?raw=true)
+<img src ="howto2.JPG"/>
 </p>
