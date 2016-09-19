@@ -38,9 +38,9 @@ You can find <b>PersonalAssistentShared-debug.aar</b> there. Copy it an paste th
 2. Run Android Studio. There, put into your build.gradle (module): 
 
  <dd> dependencies { </dd>
- <dd>     compile fileTree(dir: 'libs', include: ['*.jar']) </dd>
- <dd>     compile 'com.android.support:appcompat-v7:21.0.3' </dd>
- <dd>     <b>compile 'eu.alfred.personalassistant.sharedlibrary:PersonalAssistantShared-debug@aar'</b> </dd>
+ <dd> compile fileTree(dir: 'libs', include: ['*.jar']) </dd>
+ <dd> compile 'com.android.support:appcompat-v7:21.0.3' </dd>
+ <dd> <b>compile 'eu.alfred.personalassistant.sharedlibrary:PersonalAssistantShared-debug@aar'</b> </dd>
  <dd> } </dd>
 
 3. Build the project. 
