@@ -59,7 +59,7 @@ What AppActivity does:
 So, your on create looks like: 
 
 <p align="center">
-<img howto1.JPG/>
+<img src ="howto1.JPG"/>
 </p>
 
 IMPORTANT: Dont implement your own TouchListener, otherwise it will not work. 
