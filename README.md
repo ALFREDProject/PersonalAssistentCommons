@@ -5,9 +5,8 @@
 ## Execution and Usage
 After the Personal Assistant and the commons-libaray were set up, the following chapter now shows the process a developer has to follow in case of his own app integration.
 
-![Alt text](/relative/path/to/img.jpg?raw=true "Optional Title")
- 
-Overview of the Personal Assistant Architecture
+![Alt text](/architecture.png?raw=true "Overview of the Personal Assistant Architecture")
+
 
 An app that consumes the services of the ALFRED ecosystem needs to include the personalassistantshared-debug.aar which is part of the binary package you get with this deliverable. Alternatively, it can be found in the Jenkins CI already mentioned for the “PersonalAssistantCommons”. This Commons-library provides templates the Personal Assistant itself and especially every third party app uses. Already in previous versions, very little code was required to actually use and connect to the Personal Assistant Service. 
 The PersonalAssistant class needs a context provided in the constructor. The only event available is the setOnPersonalAssistantConnectionListener, which offers the two methods OnConnected and OnDisconnected.
