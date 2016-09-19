@@ -27,7 +27,7 @@ This libary enables the developer to access functionalities from
 
 ## Execution And Usage
 
-1. This project has the following path:
+This project has the following path:
 
 > \personalassistantcommons\PersonalAssistantShared\build\outputs\aar
  
@@ -35,7 +35,7 @@ You can find <b>PersonalAssistentShared-debug.aar</b> there. Copy it an paste th
 
 > [yourproject]\app\libs 
 
-2. Run Android Studio. There, put into your build.gradle (module): 
+Run Android Studio. There, put into your build.gradle (module): 
 
  <dd> dependencies { </dd>
  <dd> compile fileTree(dir: 'libs', include: ['*.jar']) </dd>
@@ -43,7 +43,7 @@ You can find <b>PersonalAssistentShared-debug.aar</b> there. Copy it an paste th
  <dd> <b>compile 'eu.alfred.personalassistant.sharedlibrary:PersonalAssistantShared-debug@aar'</b> </dd>
  <dd> } </dd>
 
-3. Build the project. 
+Build the project. 
 
 ## Using PAC In Your App
 
@@ -61,9 +61,7 @@ So, your on create looks like:
 <dd IMPORTANT: Dont implement your own TouchListener, otherwise it will not work. />
 </p>
 
-
- 
-2. As you can see, you are referencing to a „CircleButton“. It is an overlay to your app GUI, so that you also will be able to continue speaking, although you are not in the Personal Assistent App itself. Define the Button also in your activity_main.xml-file: 
+As you can see, you are referencing to a „CircleButton“. It is an overlay to your app GUI, so that you also will be able to continue speaking, although you are not in the Personal Assistent App itself. Define the Button also in your activity_main.xml-file: 
 
 <p align="center">
 <img src ="howto2.JPG"/>
