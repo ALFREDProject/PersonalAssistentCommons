@@ -20,9 +20,18 @@ This libary enables the developer to access functionalities from
 
 ## Execution and Usage
 
-1. This project has the following path:##\personalassistantcommons\PersonalAssistantShared\build\outputs\aar You can find PersonalAssistentShared-debug.aar there. Copy it.
+This project has the following path:
 
+    \personalassistantcommons\PersonalAssistantShared\build\outputs\aar 
+    
+You can find PersonalAssistentShared-debug.aar there. Copy it an paste the file into yourproject\app\libs 
+Run Android Studio. There, put into your build.gradle (module): 
 
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'eu.alfred.personalassistant.sharedlibrary:PersonalAssistantShared-debug@aar'  <b>sample</b>
+}
 
 
 An app that consumes the services of the ALFRED ecosystem needs to include the personalassistantshared-debug.aar which is part of the binary package you get with this deliverable. Alternatively, it can be found in the Jenkins CI already mentioned for the “PersonalAssistantCommons”. This Commons-library provides templates the Personal Assistant itself and especially every third party app uses. Already in previous versions, very little code was required to actually use and connect to the Personal Assistant Service. 
