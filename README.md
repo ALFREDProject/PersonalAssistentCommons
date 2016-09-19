@@ -58,4 +58,4 @@ What AppActivity does:
 
 So, your on create looks like: 
  
-![alt tag](howto1.jpg?raw=true)
+![alt tag](howto1.JPG?raw=true)
