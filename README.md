@@ -25,7 +25,7 @@ This libary enables the developer to access functionalities from
  
 … which are all part of the Personal Assistent. As a result, with the help of PAC your 3rd party app may use all this functionality.  
 
-## Execution And Usage In Android Studio
+## 3. Execution And Usage In Android Studio
 
 This project has the following path:
 
@@ -81,7 +81,7 @@ Till now, the app has a microphone button. Of course, you want to use the GameMa
 * Every of these methods have firstly the name of the action as a parameter, secondly a map of other arguments your action to call might use. Here, actionname is „HowToPostureAction“, which is figured out in the switch-construct. 
 
 
-==> In this example, we want to call an action, which shows an image with body posture instructions. Because we may launch different kinds of actions / query, it is recommended to use own action / query classes for this, like „HelpToPostureAction“. You could give the context and wrappers, you want to use as parameters. 
+> In this example, we want to call an action, which shows an image with body posture instructions. Because we may launch different > > > kinds of actions / query, it is recommended to use own action / query classes for this, like „HelpToPostureAction“. You could give > > the context and wrappers, you want to use as parameters. 
  
 Lets see the action we just called.  
  
